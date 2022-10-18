@@ -15,6 +15,7 @@ import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.ValueRange;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -29,7 +30,10 @@ public class SheetController {
     private static final String APPLICATION_NAME = "ScheduleBot";
 
     private static Credential authorize() throws IOException, GeneralSecurityException {
-        InputStream in = SheetController.class.getResourceAsStream("/client_secret.json");
+
+        String clientSecret = System.getenv().get("CLIENT_SECRET");
+         //InputStream in = SheetController.class.getResourceAsStream("/client_secret.json");
+        InputStream in = new ByteArrayInputStream(clientSecret.getBytes());
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JacksonFactory.getDefaultInstance(), new InputStreamReader(Objects.requireNonNull(in)));
 
 

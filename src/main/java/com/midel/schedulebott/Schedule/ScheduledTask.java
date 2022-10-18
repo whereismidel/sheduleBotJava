@@ -4,6 +4,7 @@ import com.midel.schedulebott.Config.ChatConfig;
 import com.midel.schedulebott.Exceptions.MissingMessageExceptions;
 import com.midel.schedulebott.Group.Group;
 import com.midel.schedulebott.Group.GroupController;
+import com.midel.schedulebott.SheetAPI.SheetValidator;
 import com.midel.schedulebott.TelegramBot.SendMessage;
 import org.javatuples.Pair;
 import org.slf4j.Logger;
@@ -136,7 +137,7 @@ public class ScheduledTask {
             }  catch (MissingMessageExceptions e) {
                 logger.debug("No lesson to send according to the schedule.");
             } catch (Exception ee){
-                logger.warn("Failed to send message according to the schedule.");
+                logger.warn("Failed to send message according to the schedule.", ee);
             }
             try {
                 TimeUnit.MILLISECONDS.sleep(1000);
@@ -164,6 +165,8 @@ public class ScheduledTask {
         try {
             GroupController.updateGroupSchedule();
             GroupController.updateGroupScheduleSubjectInfo();
+
+
         } catch (GeneralSecurityException | IOException e) {
             logger.error("Failed to update data from tables Schedule and Subject.", e);
         }

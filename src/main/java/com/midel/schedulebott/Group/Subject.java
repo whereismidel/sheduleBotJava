@@ -34,6 +34,10 @@ public class Subject {
         this.noteForSecondGroup = noteForGeneralLesson;
     }
 
+    Subject(String name){
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }

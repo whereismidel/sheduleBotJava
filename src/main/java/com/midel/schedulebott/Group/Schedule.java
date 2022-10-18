@@ -68,18 +68,18 @@ public class Schedule {
         String lessonForFirstGroup = subgroups.getValue0();
         String lessonForSecondGroup = subgroups.getValue1();
             /*
-                '-' and ('-' or  ' ') -> no lesson
-                'value1' and (('value2' and ('value1' = 'value2')) or  ' ') -> same lesson
+                '-' and ('-' or  '') -> no lesson
+                'value1' and '' -> same lesson
+
                 ('value1' and 'value2') or ('value1' and '-') or ('-' and 'value2') -> different lesson
             */
 
         if (lessonForFirstGroup.equals("-") &&
                 (lessonForSecondGroup.equals("-") || lessonForSecondGroup.trim().equals(""))){
             return new Pair<>(null, isLastLesson(dayOfWeek, weekNumber, numberOfSubject));
-        } else if (!lessonForFirstGroup.equals("-") &&
-                ((!lessonForSecondGroup.equals("-") && lessonForFirstGroup.equals(lessonForSecondGroup)) || lessonForSecondGroup.trim().equals(""))) {
+        } else if (!lessonForFirstGroup.equals("-") && lessonForSecondGroup.trim().equals("")) {
                 Subject subject = getSubjectByName(lessonForFirstGroup);
-                subjects = new Pair<>(subject, subject);
+                subjects = new Pair<>(subject, new Subject("SAME"));
         } else {
             if (lessonForFirstGroup.equals("-"))
                 subjects = new Pair<>(null, getSubjectByName(lessonForSecondGroup));

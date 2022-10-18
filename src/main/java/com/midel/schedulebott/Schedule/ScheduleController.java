@@ -125,7 +125,6 @@ public class ScheduleController {
             if (lessonForFirstGroup.equals("-") &&
                     (lessonForSecondGroup.equals("-") || lessonForSecondGroup.equals(""))){
                 formatString.append(i).append(".     —\n\n");
-                logger.debug("{} {}", lessonForFirstGroup, lessonForSecondGroup);
             } else if (!lessonForFirstGroup.equals("-") &&
                         ((!lessonForSecondGroup.equals("-") && lessonForFirstGroup.equals(lessonForSecondGroup)) || lessonForSecondGroup.equals(""))) {
                 formatString
@@ -205,7 +204,7 @@ public class ScheduleController {
                     InlineKeyboardButton firstButton = new InlineKeyboardButton();
                     InlineKeyboardButton secondButton = new InlineKeyboardButton();
                     formatString += numberUnicode[time.numberOfLesson] + " пара за розкладом.";
-                    if (firstGroupSubject != secondGroupSubject){
+                    if (!(secondGroupSubject != null && secondGroupSubject.getName().equals("SAME"))){
                         formatString += "\nПочаток в <b><i>"+ time.timeForReal.format(DateTimeFormatter.ofPattern("HH:mm")) + "</i></b>";
                         formatString += "\n\n<u>I підгрупа:</u>\n";
                         if (firstGroupSubject == null) {

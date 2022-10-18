@@ -1,6 +1,7 @@
 package com.midel.schedulebott.Group;
 
 import com.midel.schedulebott.Config.DBConfig;
+import com.midel.schedulebott.SheetAPI.SheetValidator;
 import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,6 +98,8 @@ public class GroupController {
             }  catch (Exception e) {
                 logger.error("Error while reading Group Schedule sheet. {}", group, e);
             }
+
+            SheetValidator.scheduleSheetValidator(group);
         }
         logger.info("Successful update of data from Schedule sheet.");
         logger.trace("Group list after update schedule:\n{}", groups);
@@ -166,3 +169,5 @@ public class GroupController {
                 .orElse(null);
     }
 }
+
+
