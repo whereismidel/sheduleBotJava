@@ -17,5 +17,5 @@ $ docker run -it schedulebot
 ## Run from Docker Packages
 
 ```bash
-$ docker run -it ghcr.io/c-h3xcode/shedulebotjava:main
+$ docker run -it ghcr.io/whereismidel/shedulebotjava:main
 ```
