@@ -1,10 +1,10 @@
 package com.midel.schedulebott;
 
-import com.midel.schedulebott.Group.Group;
-import com.midel.schedulebott.Group.GroupController;
-import com.midel.schedulebott.Schedule.ScheduledTask;
-import com.midel.schedulebott.TelegramBot.ScheduleBotChannel;
-import com.midel.schedulebott.TelegramBot.SendMessage;
+import com.midel.schedulebott.group.Group;
+import com.midel.schedulebott.group.GroupController;
+import com.midel.schedulebott.schedule.ScheduledTask;
+import com.midel.schedulebott.telegram.ScheduleBotChannel;
+import com.midel.schedulebott.telegram.SendMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -20,12 +20,13 @@ import java.util.concurrent.TimeUnit;
 @EnableScheduling
 public class BotInitialization {
     private static final Logger logger = LoggerFactory.getLogger(BotInitialization.class);
+    public static final ScheduleBotChannel scheduleBot = new ScheduleBotChannel();
 
     public static void main(String[] args) throws InterruptedException {
         while(true) {
             try {
                 TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-                botsApi.registerBot(new ScheduleBotChannel());
+                botsApi.registerBot(scheduleBot);
 
                 SpringApplication.run(BotInitialization.class, args);
 

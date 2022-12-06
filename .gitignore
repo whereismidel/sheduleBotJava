@@ -1,3 +1,6 @@
 target/
 mvnw
 mvnw.cmd
+/.idea/
+/logs/
+/src/main/resources/credentials_service.json
