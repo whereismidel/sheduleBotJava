@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.midel.schedulebott.command.CommandName.NO;
 import static com.midel.schedulebott.group.GroupController.getGroupByName;
-import static com.midel.schedulebott.group.GroupController.groups;
+import static com.midel.schedulebott.group.GroupRepo.groups;
 
 /**
  * SendMessage {@link Command}.
@@ -59,7 +59,7 @@ public class SendMessageCommand extends Command{
 
                 switch (identifier){
                     case "ALL_CHANNEL":{
-                        for(Group group : groups){
+                        for(Group group : groups.values()){
                             try {
                                 sendMessage.sendTextWithEntitiesMessage(group.getChannelId(), replyMessage.getText(), replyMessage.getEntities());
                             } catch (Exception e){
@@ -75,7 +75,7 @@ public class SendMessageCommand extends Command{
                         break;
                     }
                     case "ALL_ADMINS":{
-                        for(Group group : groups){
+                        for(Group group : groups.values()){
                             try {
                                 sendMessage.sendTextWithEntitiesMessage(group.getLeaderId(), replyMessage.getText(), replyMessage.getEntities());
                             } catch (Exception e){

@@ -4,6 +4,7 @@ import com.midel.schedulebott.command.annotation.AdminCommand;
 import com.midel.schedulebott.telegram.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+
 /**
  * Test any feature {@link Command}.
  */
@@ -16,9 +17,8 @@ public class TestCommand extends Command {
 
     @Override
     public void execute(Update update) {
-        sendMessage.sendClientKeyboard(update.getMessage().getChatId().toString(),
-                "Test",
-                new String[][]{{"Старт", "Стоп"},{"Тест"}}, false);
+        String userId = update.getMessage().getChatId().toString();
+        sendMessage.sendHTMLMessage(userId, "<a href=\"tg://user?id=5458685173\">test :)</a>");
     }
 
 

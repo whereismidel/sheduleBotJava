@@ -2,15 +2,17 @@ package com.midel.schedulebott.config;
 
 import com.midel.schedulebott.command.CommandName;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static java.time.temporal.ChronoUnit.WEEKS;
+
 public class ChatConfig {
     // debug mode
     public static final List<String> ADMINS = Collections.singletonList("787943933");
+    public static final String creatorUsername = "@Midell";
     public static boolean debug = false;
 
     /**
@@ -21,13 +23,18 @@ public class ChatConfig {
     // Global setting if there are fatal errors
     public static boolean sendSchedule = true;
 
-    // за скільки до початку пари повідомляти про неї.
+    // за скільки до початку пари повідомляти про неї. ToDO
     public static int scheduleTime = 5; // якщо змінювати - слідкувати, щоб крон вираз був кратний по хвилинам.
-    public static LocalDateTime startSemester = !debug?
-                                                LocalDateTime.of(2022,8,22,0,0):
-                                                LocalDateTime.of(2020,1,22,0,0);
-    public static LocalDateTime endSemester = !debug?
-                                                LocalDateTime.of(2022,11,30,23,59):
-                                                LocalDateTime.of(2030,12,30,23,59);
-    public static boolean isSaturdayLesson = true;
+
+
+    // Рік навчання
+    public static int year = 2023;
+    // Дата початку семестру
+    public static LocalDateTime startSemester = LocalDateTime.of(year,2,1,0,0);
+    // Дата кінця семестру
+    public static LocalDateTime endSemester = LocalDateTime.of(year,6,30,23,59);
+    // Номер тижня від початку року, з якого почався семестр
+    public static long startWeekNumber =  WEEKS.between(LocalDateTime.of(year,1,1,0,0), startSemester);
+    // Чи потрібні пари по суботам
+    public static boolean isSaturdayLesson = false;
 }

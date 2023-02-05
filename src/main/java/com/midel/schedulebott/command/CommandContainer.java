@@ -37,6 +37,13 @@ public class CommandContainer {
                 .put(GET_SCHEDULE_USER.getCommandName(), new GetScheduleUserCommand(sendMessage))
                 .put(ADMIN_HELP.getCommandName(), new AdminHelpCommand(sendMessage))
                 .put(SEND_MESSAGE.getCommandName(), new SendMessageCommand(sendMessage))
+                .put(MENU.getCommandName(), new MenuCommand(sendMessage))
+                .put(DELETE_STUDENT.getCommandName(), new DeleteStudentCommand(sendMessage))
+                .put(SET_GROUP.getCommandName(), new SetGroupCommand(sendMessage))
+                .put(RECREATE_STUDENT.getCommandName(), new RestartCommand(sendMessage))
+                .put(IMPORT_STUDENTS.getCommandName(), new ImportStudentsCommand(sendMessage))
+                .put(IMPORT_GROUPS.getCommandName(), new ImportGroupsCommand(sendMessage))
+                .put(FLOOD.getCommandName(), new FloodCommand(sendMessage))
                 .build();
 
         unknownCommand = new UnknownCommand(sendMessage);

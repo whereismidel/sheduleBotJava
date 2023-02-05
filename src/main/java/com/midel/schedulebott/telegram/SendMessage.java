@@ -1,12 +1,14 @@
 package com.midel.schedulebott.telegram;
 
 import com.midel.schedulebott.BotInitialization;
+import com.midel.schedulebott.keyboard.inline.InlineKeyboardAnswer;
 import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.SetChatDescription;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -23,13 +25,15 @@ public class SendMessage {
     static final Logger logger = LoggerFactory.getLogger(SendMessage.class);
     private static ScheduleBotChannel scheduleBot;
 
+    // ToDo Подумати, якщо відвалиться з'єднання з тг
     public SendMessage(){
         if (scheduleBot==null){
             scheduleBot = BotInitialization.scheduleBot;
         }
     }
+
     /**
-     * <h3>Send message with HTML markup via telegram bot.</h3>
+     * <h3>Send message without markup via telegram bot.</h3>
      *
      * @param chatId provided chatId in which messages would be sent.
      * @param text provided message to be sent.
@@ -42,12 +46,31 @@ public class SendMessage {
         try {
             scheduleBot.execute(sendMessage);
         } catch (TelegramApiException e) {
-            logger.error("Failed to send TEXT message.", e);
+            logger.error("Failed to send TEXT message.\nChatId = {} Message = {}", chatId, text, e);
+        }
+    }
+
+    // split large messages into several smaller ones
+    public void sendLargeTextMessage(String chatId, ArrayList<String> text, String startMessageFrom){
+        StringBuilder toSend = new StringBuilder(startMessageFrom);
+
+        for(int i = 0; i < text.size(); i++){
+            while (i < text.size() && toSend.length() < 3500){
+                if (text.get(i).length() + toSend.length() > 3500) {
+                    toSend.append("*Повідомлення для відправки було надто великим*\n");
+                } else {
+                    toSend.append(text.get(i)).append("\n");
+                }
+                i++;
+            }
+            new SendMessage().sendTextMessage(chatId, toSend.toString());
+
+            toSend = new StringBuilder();
         }
     }
 
     /**
-     * <h3>Send message without markup via telegram bot.</h3>
+     * <h3>Send message with HTML markup via telegram bot.</h3>
      *
      * @param chatId provided chatId in which messages would be sent.
      * @param text provided message to be sent.
@@ -102,6 +125,12 @@ public class SendMessage {
                         keyboardButtonsRow.add(inlineKeyboardButton);
                     } else if (button.getClass() == InlineKeyboardButton.class) {
                         keyboardButtonsRow.add((InlineKeyboardButton) button);
+                    } else if (button.getClass() == InlineKeyboardAnswer.class) {
+                        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+                        inlineKeyboardButton.setText(((InlineKeyboardAnswer) button).getCallbackText());
+                        inlineKeyboardButton.setCallbackData(((InlineKeyboardAnswer) button).getCallbackData());
+
+                        keyboardButtonsRow.add(inlineKeyboardButton);
                     }
                 }
             }
@@ -163,7 +192,7 @@ public class SendMessage {
         try {
             scheduleBot.execute(sendMessage);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            logger.error("Failed to send client keyboard. ChatID = {}", chatId, e);
         }
     }
 
@@ -210,14 +239,15 @@ public class SendMessage {
      * @param description provided description to be change.
      */
     public void changeDescription(String chatId, String description) {
-        SetChatDescription setDescription = new SetChatDescription();
-
-        setDescription.setChatId(chatId);
-        setDescription.setDescription(description);
-
         try {
+
+            SetChatDescription setDescription = new SetChatDescription();
+
+            setDescription.setChatId(chatId);
+            setDescription.setDescription(description);
+
             scheduleBot.execute(setDescription); // Надсилання
-        } catch (TelegramApiException e) {
+        } catch (Exception e) {
             logger.warn("Failed to change channel description. (Description is the same as above). ChatID = {}", chatId);
         }
     }
@@ -228,15 +258,44 @@ public class SendMessage {
      * @param chatId provided chatId in which messages would be deleted.
      * @param messageId provided message id to be delete.
      */
-    public void deleteMessage(String chatId, int messageId) {
+    public boolean deleteMessage(String chatId, int messageId) {
         DeleteMessage deleteMessage = new DeleteMessage(chatId, messageId);
 
         try {
-            scheduleBot.execute(deleteMessage); // Видалення
+            return scheduleBot.execute(deleteMessage); // Видалення
         } catch (TelegramApiRequestException re){
             logger.warn("Failed to delete message. chatId = {}, {}", chatId, re.getMessage());
         } catch (TelegramApiException e) {
             logger.warn("Failed to delete message. Unknown reason", e);
+        }
+        return false;
+    }
+
+    /**
+     * <h3>Send message with HTML markup via telegram bot and reply to message.</h3>
+     *
+     * @param chatId provided chatId in which messages would be sent.
+     * @param text provided message to be sent.
+     */
+    public int replyMessage(String chatId, String text) {
+
+        org.telegram.telegrambots.meta.api.methods.send.SendMessage sendMessage = new org.telegram.telegrambots.meta.api.methods.send.SendMessage();
+        sendMessage.setChatId(chatId);
+        sendMessage.setText(text);
+
+        ForceReplyKeyboard force = new ForceReplyKeyboard();
+        force.setForceReply(true);
+        //force.setSelective(true);
+        sendMessage.setReplyMarkup(force);
+
+        sendMessage.enableHtml(true);
+        sendMessage.disableWebPagePreview();
+
+        try {
+            return scheduleBot.execute(sendMessage).getMessageId(); // Надсилання
+        } catch (TelegramApiException e) {
+            logger.error("Failed to send reply message. ChatID = {}", chatId, e);
+            return -1;
         }
     }
 

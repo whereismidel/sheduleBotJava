@@ -24,8 +24,8 @@
     </appender>
 
     <logger name="com.midel" level="info" additivity="false">
-        <appender-ref ref="FILE"/>
         <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
     </logger>
 
     <root level="info">

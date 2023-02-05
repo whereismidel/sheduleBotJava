@@ -2,9 +2,9 @@ package com.midel.schedulebott.schedule;
 
 import com.midel.schedulebott.command.CommandName;
 import com.midel.schedulebott.config.ChatConfig;
-import com.midel.schedulebott.exceptions.MissingMessageExceptions;
+import com.midel.schedulebott.exceptions.MissingMessageException;
 import com.midel.schedulebott.group.Group;
-import com.midel.schedulebott.group.GroupController;
+import com.midel.schedulebott.group.GroupRepo;
 import com.midel.schedulebott.telegram.SendMessage;
 import org.javatuples.Pair;
 import org.slf4j.Logger;
@@ -13,9 +13,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.time.*;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.temporal.IsoFields;
 import java.util.concurrent.TimeUnit;
 
@@ -34,11 +33,14 @@ public class ScheduledTask {
         ZonedDateTime currentZonedDate = ZonedDateTime.now(ZoneId.of("Europe/Kiev"));
         currentZonedDate = currentZonedDate.plusDays(1);
 
-        for(Group group : GroupController.groups) {
+        for(Group group : GroupRepo.groups.values()) {
             try {
                 group.getSettings().setDailyNotification(true);
                 String message = "<b><u>ЗАВТРА</u></b> " + ScheduleController.getMessageForStartOfNewDay(group, currentZonedDate);
-                new SendMessage().sendHTMLMessage(group.getChannelId(), message);
+                int tomorrowID = new SendMessage().sendHTMLMessage(group.getChannelId(), message);
+
+                group.setDeleteMessage(tomorrowID);
+                GroupRepo.exportGroupList();
 
             } catch (Exception e) {
                 logger.error("Failed to send schedule for tomorrow. {}", group, e);
@@ -57,7 +59,7 @@ public class ScheduledTask {
 
         ZonedDateTime currentZonedDate = ZonedDateTime.now(ZoneId.of("Europe/Kiev"));
 
-        for(Group group : GroupController.groups) {
+        for(Group group : GroupRepo.groups.values()) {
             int lastMessage;
 
             group.getSettings().setDailyNotification(true);
@@ -66,7 +68,6 @@ public class ScheduledTask {
             if (debugArray != null && debug ) {
                 if (debugArray.get(0) == CommandName.GET_SCHEDULE_FOR) {
                     if (debugArray.get(1).equals(group.getGroupName())) {
-                        System.out.println(debugArray.get(1));
                         group.getSettings().setDailyNotification(true);
 
                         currentZonedDate = currentZonedDate.plusDays(Integer.parseInt((String) debugArray.get(2)));
@@ -76,7 +77,6 @@ public class ScheduledTask {
                 }
             }
             // END OF DEBUG FUNCTIONS
-
             if (!ChatConfig.sendSchedule ||
                     currentZonedDate.isBefore(ZonedDateTime.of(ChatConfig.startSemester, ZoneId.of("Europe/Kiev"))) ||
                     currentZonedDate.isAfter(ZonedDateTime.of(ChatConfig.endSemester, ZoneId.of("Europe/Kiev")))) {
@@ -88,13 +88,17 @@ public class ScheduledTask {
 
             try {
                 String message = ScheduleController.getMessageForStartOfNewDay(group, currentZonedDate);
-                lastMessage = new SendMessage().sendHTMLMessage(group.getChannelId(), message);
+                new SendMessage().sendHTMLMessage(group.getChannelId(), message);
 
-                // Deleting a message with a schedule for tomorrow.
-                new SendMessage().deleteMessage(group.getChannelId(), lastMessage - 1);
+                if (group.getDeleteMessage() != null){
+                    new SendMessage().deleteMessage(group.getChannelId(), group.getDeleteMessage());
+                    group.setDeleteMessage(null);
+                    GroupRepo.exportGroupList();
+                    logger.info("Successful remove message with schedule for tomorrow. GroupName = {}", group.getGroupName());
+                }
 
                 logger.info("Successful submission of the full schedule for the day. GroupName = {}", group.getGroupName());
-            } catch (MissingMessageExceptions me){
+            } catch (MissingMessageException me){
                 logger.warn(me.getMessage());
             } catch (Exception e) {
                 logger.error("Failed to send schedule for today. {}", group, e);
@@ -115,7 +119,7 @@ public class ScheduledTask {
 
         ZonedDateTime currentZonedDate = ZonedDateTime.now(ZoneId.of("Europe/Kiev"));
 
-        for(Group group : GroupController.groups) {
+        for(Group group : GroupRepo.groups.values()) {
             // DEBUG FUNCTIONS
             if (debugArray != null && debug) {
                 if (debugArray.get(0).equals(CommandName.GET_LESSON)) {
@@ -155,44 +159,17 @@ public class ScheduledTask {
                 }
 
                 logger.debug("Successful submission of the schedule. GroupName = {}", group.getGroupName());
-            }  catch (MissingMessageExceptions e) {
+            }  catch (MissingMessageException e) {
                 logger.debug("No lesson to send according to the schedule.");
             } catch (Exception ee){
                 logger.warn("Failed to send message according to the schedule.", ee);
             }
             try {
-                TimeUnit.MILLISECONDS.sleep(1000);
+                TimeUnit.MILLISECONDS.sleep(1500);
             } catch (InterruptedException e) {
                 logger.warn("Failed to set delay for sending scheduled lessons.", e);
             }
         }
         debugArray = null;
     }
-
-    @Scheduled(cron = "0 0 7 ? * *", zone = "Europe/Kiev")
-    public void initAndUpdateGroupListFromSheet(){
-        try {
-            GroupController.updateGroupList();
-            GroupController.updateGroupScheduleSubjectInfo();
-            GroupController.updateGroupSchedule();
-
-            GroupController.updateStates();
-            logger.info("Successful initiation of data from tables.");
-        } catch (GeneralSecurityException | IOException e) {
-            logger.error("Failed to initialize data from tables.", e);
-        }
-    }
-
-    @Scheduled(cron = "0 10/2 7-19 ? * MON,TUE,WED,THU,FRI,SAT", zone = "Europe/Kiev")
-    public void updateGroupInfo(){
-        try {
-            GroupController.updateGroupScheduleSubjectInfo();
-            GroupController.updateGroupSchedule();
-
-            GroupController.updateStates();
-        } catch (GeneralSecurityException | IOException e) {
-            logger.error("Failed to update data from tables Schedule and Subject.", e);
-        }
-    }
-
 }

@@ -20,7 +20,7 @@ public class GetScheduleForCommand extends Command{
 
     public final static String INVALID_ARGUMENT_MESSAGE = "Невірно вказані аргументи або їх кількість або виключений режим відкладки. \n"
             +"/scheduleFor - для довідки.";
-    public final static String INFO_MESSAGE = "`/scheduleFor` `день` \\- відобразити розклад сьогодні\\+`день`\\.";
+    public final static String INFO_MESSAGE = "`/scheduleFor` `назва групи` `день` \\- відобразити розклад сьогодні\\+`день`\\.";
 
     public GetScheduleForCommand(SendMessage sendMessage){
         super(sendMessage);
@@ -29,6 +29,7 @@ public class GetScheduleForCommand extends Command{
     @Override
     public void execute(Update update) {
         String userId = update.getMessage().getChat().getId().toString();
+
 
         if (arguments != null) {
             if (arguments.size() == 0) {
@@ -39,7 +40,7 @@ public class GetScheduleForCommand extends Command{
                 ChatConfig.debugArray = new ArrayList<>();
                 ChatConfig.debugArray.add(GET_SCHEDULE_FOR);
 
-                ChatConfig.debugArray.add(arguments.get(0).toUpperCase()); // назва групи
+                ChatConfig.debugArray.add(arguments.get(0)); // назва групи
                 ChatConfig.debugArray.add(arguments.get(1).toLowerCase()); // день(число)
 
                 new ScheduledTask().updateAndStartOfNewDay();

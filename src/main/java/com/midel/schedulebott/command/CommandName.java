@@ -11,6 +11,7 @@ public enum CommandName {
     HELP("/help"),
     ADMIN_HELP("/ahelp"),
     NO("no_command"),
+    FLOOD("flood"),
     UNKNOWN("unknown"),
     SWITCH_SCHEDULE("/switchschedule"),
     SWITCH_DEBUG("/switchdebug"),
@@ -18,8 +19,11 @@ public enum CommandName {
     GET_SCHEDULE_FOR("/schedulefor"),
     SEND_MESSAGE("/sendmessage"),
     GET_SCHEDULE_USER("/розклад"),
-    TEST_SCHEDULE("/scheduletest"); // toDo староста
-
+    SET_GROUP("/setgroup"),
+    DELETE_STUDENT("/deletestudent"),
+    RECREATE_STUDENT("/restart"),
+    IMPORT_STUDENTS("/studentimport"),
+    IMPORT_GROUPS("/groupimport");
 
     private final String commandName;
 

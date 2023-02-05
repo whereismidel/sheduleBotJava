@@ -3,170 +3,119 @@ package com.midel.schedulebott.google;
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.sheets.v4.Sheets;
-import com.google.api.services.sheets.v4.model.*;
+import com.google.api.services.sheets.v4.model.Spreadsheet;
+import com.google.api.services.sheets.v4.model.ValueRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class SheetAPI {
 
-    static final Logger logger = LoggerFactory.getLogger(SheetAPI.class);
+    public static final Logger logger = LoggerFactory.getLogger(SheetAPI.class);
     private static Sheets sheetService;
 
-    public static List<List<Object>> readSheetForRange(String spreadsheetID, String range) throws GeneralSecurityException, IOException {
+    private static void getSheetService() {
+        try {
+            while(sheetService == null) {
+                sheetService = GoogleAPIService.getSheetService();
+                if (sheetService == null) {
+                    TimeUnit.SECONDS.sleep(10);
+                    logger.error("Failed to get sheet service.");
+                }
+            }
+        } catch (InterruptedException | IOException | GeneralSecurityException e) {
+            logger.error("Error while getting sheet service.", e);
+        }
+    }
+
+    public static List<List<Object>> readSheetForRange(String spreadsheetId, String range) {
 
         try {
-            if (sheetService == null) {
-                sheetService = GoogleAPIService.getSheetService();
-            }
-            ValueRange responce = sheetService.spreadsheets().values()
-                    .get(spreadsheetID, range)
+            getSheetService();
+            ValueRange response = sheetService.spreadsheets().values()
+                    .get(spreadsheetId, range)
                     .execute();
 
-            return responce.getValues();
+            return response.getValues();
 
         } catch (GoogleJsonResponseException e) {
             GoogleJsonError error = e.getDetails();
             logger.error("Failed read data for range: {}", error);
-
-            return null;
-
-        }
-    }
-
-    public static void updateValues(String spreadsheetId, String range, List<List<Object>> values) throws IOException, GeneralSecurityException {
-
-        if (sheetService == null) {
-            sheetService = GoogleAPIService.getSheetService();
+        } catch (IOException ee){
+            logger.error("Error while reading sheet for range. SheetID = {}, Range = {}", spreadsheetId, range, ee);
         }
 
-        ValueRange vr = new ValueRange()
-                .setValues(values)
-                .setMajorDimension("ROWS");
-
-        sheetService
-                .spreadsheets()
-                .values()
-                .update(spreadsheetId, range, vr)
-                .setValueInputOption("USER_ENTERED").execute();
+        return null;
     }
 
-    public static String createSheet(String title, String[] shareList, String copyFrom) {
+
+
+    public static boolean updateValues(String spreadsheetId, String range, List<List<Object>> values) {
+
         try {
-            if (sheetService == null) {
-                sheetService = GoogleAPIService.getSheetService();
-            }
+            getSheetService();
 
-            // Create new spreadsheet with a title
-            Spreadsheet spreadsheet = new Spreadsheet()
-                    .setProperties(new SpreadsheetProperties()
-                            .setTitle(title));
+            ValueRange vr = new ValueRange()
+                    .setValues(values)
+                    .setMajorDimension("ROWS");
 
-            spreadsheet = sheetService.spreadsheets().create(spreadsheet)
-                    .setFields("spreadsheetId")
+            sheetService
+                    .spreadsheets()
+                    .values()
+                    .update(spreadsheetId, range, vr)
+                    .setValueInputOption("USER_ENTERED").execute();
+            return true;
+        } catch (IOException e){
+            logger.error("Error while updating sheet for range. SheetID = {}, Range = {}", spreadsheetId, range, e);
+            return false;
+        }
+    }
+    public static String createSpreadsheetFromTemplateAndSharePermission(String newSheetTitle, String[] shareList, String templateSheetId) {
+        try {
+            getSheetService();
+
+            // Export template spreadsheet
+            Spreadsheet sourceSpreadsheet = sheetService
+                    .spreadsheets()
+                    .get(templateSheetId)
+                    .setIncludeGridData(true)
                     .execute();
 
-            for (String user : shareList) {
-                DriveAPI.shareWritePermission(spreadsheet.getSpreadsheetId(), user);
-            }
+            // Create a new spreadsheet based on template
+            Spreadsheet spreadsheetClone = sourceSpreadsheet.clone();
+            spreadsheetClone.setSpreadsheetId("").setSpreadsheetUrl("").getProperties().setTitle(newSheetTitle);
 
-            copySheet(copyFrom, spreadsheet.getSpreadsheetId());
-
-            logger.info("Spreadsheet successfully created and filled: https://docs.google.com/spreadsheets/d/{}", spreadsheet.getSpreadsheetId());
-            return spreadsheet.getSpreadsheetId();
-        } catch (Exception e){
-            logger.warn("Error when sheet is creating.", e);
-
-            return null;
-        }
-
-    }
-
-    private static void copySheet(String copyFrom, String copyTo) throws GeneralSecurityException, IOException {
-        try {
-            if (sheetService == null) {
-                sheetService = GoogleAPIService.getSheetService();
-            }
-
-            List<Sheet> sheets = sheetService
+            Spreadsheet destinationSpreadsheet = sheetService
                     .spreadsheets()
-                    .get(copyFrom)
-                    .execute()
-                    .getSheets();
+                    .create(spreadsheetClone)
+                    .setPrettyPrint(true)
+                    .execute();
 
-            CopySheetToAnotherSpreadsheetRequest requestBody =
-                    new CopySheetToAnotherSpreadsheetRequest()
-                            .setDestinationSpreadsheetId(copyTo);
+            logger.info("Spreadsheet successfully created and filled from template: {}", destinationSpreadsheet.getSpreadsheetUrl());
 
-            for (Sheet sheet : sheets) {
-                sheetService
-                        .spreadsheets()
-                        .sheets()
-                        .copyTo(copyFrom, sheet.getProperties().getSheetId(), requestBody)
-                        .execute();
+            // Give access to the new spreadsheet to users from shareList
+            for (String user : shareList) {
+                DriveAPI.shareWritePermission(destinationSpreadsheet.getSpreadsheetId(), user);
             }
 
-            copySheetTitle(copyFrom, copyTo);
-            logger.info("Template table successfully cloned to {}", copyTo);
-        } catch (Exception e){
-            logger.error("Error when sheet is copping. From {} to {}", copyFrom, copyTo, e);
-        }
-    }
+            return destinationSpreadsheet.getSpreadsheetId();
 
-    private static void copySheetTitle(String copyFrom, String copyTo)
-            throws GeneralSecurityException, IOException {
-
-        if (sheetService == null) {
-            sheetService = GoogleAPIService.getSheetService();
-        }
-
-        // Get spreadsheet data
-        Sheets.Spreadsheets.Get request = sheetService.spreadsheets().get(copyFrom);
-        List<Sheet> sheets = request.execute().getSheets();
-
-        List<Request> requests = new ArrayList<>();
-        BatchUpdateSpreadsheetResponse response = null;
-        try {
-            // Delete empty first sheet
-            requests.add(new Request()
-                    .setDeleteSheet(new DeleteSheetRequest()
-                            .setSheetId(sheets.get(0)
-                                    .getProperties()
-                                    .getSheetId())));
-            // Change title from "copy of Розклад" to "РОЗКЛАД";
-            requests.add(new Request()
-                    .setUpdateSheetProperties(new UpdateSheetPropertiesRequest()
-                            .setProperties(new SheetProperties()
-                                    .setSheetId(sheets.get(1).getProperties().getSheetId())
-                                    .setTitle(sheets.get(1).getProperties().getTitle()))
-                            .setFields("title")));
-            // Change title from "copy of Розклад" to "РОЗКЛАД";
-            requests.add(new Request()
-                    .setUpdateSheetProperties(new UpdateSheetPropertiesRequest()
-                            .setProperties(new SheetProperties()
-                                    .setSheetId(sheets.get(2).getProperties().getSheetId())
-                                    .setTitle(sheets.get(1).getProperties().getTitle()))
-                            .setFields("title")));
-
-            BatchUpdateSpreadsheetRequest body =
-                    new BatchUpdateSpreadsheetRequest().setRequests(requests);
-
-            sheetService.spreadsheets().batchUpdate(copyTo, body).execute();
-            logger.info("Sheet title table successfully cloned from {} to {}", copyFrom, copyTo);
         } catch (GoogleJsonResponseException e) {
             GoogleJsonError error = e.getDetails();
             if (error.getCode() == 404) {
-                logger.error("Spreadsheet not found with id '{}' or '{}'.", copyFrom, copyTo, e);
+                logger.error("Spreadsheet not found with id {}", templateSheetId, e);
             } else {
-                logger.error("Failed to copy sheet title.", e);
+                logger.error("Unknown error while creating and filling new sheet: ", e);
             }
+        } catch (Exception e){
+            logger.error("Error while parsing from/to sheet or failed to update sheet title or protected range.", e);
         }
 
+        return null;
     }
+
 }
-
-

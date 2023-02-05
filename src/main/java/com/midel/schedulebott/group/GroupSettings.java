@@ -1,11 +1,17 @@
 package com.midel.schedulebott.group;
 
-public class GroupSettings {
-    private boolean dailyNotification = true;
-    private boolean state = true;
-    private boolean validTable = false;
+import java.time.LocalDateTime;
 
-    public boolean isDailyNotification() {
+public class GroupSettings {
+    private Boolean dailyNotification = true;
+    private Boolean state = false;
+    private Boolean valid = false;
+    private LocalDateTime lastRequestToTable;
+
+    // ToDo регулювати час відправки розкладу
+    // ToDo якщо група не отримала повідомлення бо мало прав, відключати групу від бота(або відслідковувати зміну прав/кік)
+
+    public Boolean isDailyNotification() {
         return dailyNotification;
     }
 
@@ -13,7 +19,7 @@ public class GroupSettings {
         this.dailyNotification = dailyNotification;
     }
 
-    public boolean isState() {
+    public Boolean isState() {
         return state;
     }
 
@@ -21,11 +27,29 @@ public class GroupSettings {
         this.state = state;
     }
 
-    public boolean isValidTable() {
-        return validTable;
+    public LocalDateTime getLastRequestToTable() {
+        return lastRequestToTable;
     }
 
-    public void setValidTable(boolean invalidTable) {
-        this.validTable = invalidTable;
+    public void setLastRequestToTable(LocalDateTime lastRequestToTable) {
+        this.lastRequestToTable = lastRequestToTable;
+    }
+
+    public Boolean isValid() {
+        return valid;
+    }
+
+    public void setValid(boolean valid) {
+        this.valid = valid;
+    }
+
+    @Override
+    public String toString() {
+        return "GroupSettings{" +
+                "dailyNotification=" + dailyNotification +
+                ", state=" + state +
+                ", valid=" + valid +
+                ", lastModifiedFile=" + lastRequestToTable +
+                '}';
     }
 }

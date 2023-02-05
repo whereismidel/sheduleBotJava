@@ -1,16 +1,15 @@
 package com.midel.schedulebott.schedule;
 
 import com.midel.schedulebott.config.ChatConfig;
-import com.midel.schedulebott.exceptions.MissingMessageExceptions;
+import com.midel.schedulebott.exceptions.MissingMessageException;
 import com.midel.schedulebott.group.Group;
+import com.midel.schedulebott.group.GroupRepo;
 import com.midel.schedulebott.group.Subject;
 import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
@@ -20,7 +19,7 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import static com.midel.schedulebott.config.ChatConfig.sendSchedule;
-import static com.midel.schedulebott.google.SheetAPI.updateValues;
+import static com.midel.schedulebott.config.ChatConfig.startWeekNumber;
 
 public class ScheduleController {
     static String[] dayOfWeek = {"Неділя", "Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота"};
@@ -68,15 +67,15 @@ public class ScheduleController {
         return new Pair<>(day, week);
     }
 
-    public static String getMessageForStartOfNewDay(Group group, ZonedDateTime zdt) throws MissingMessageExceptions {
+    public static String getMessageForStartOfNewDay(Group group, ZonedDateTime zdt) throws MissingMessageException {
 
         int weekNumber = zdt.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
 
         if (!sendSchedule || !group.getSettings().isState() || weekNumber == 7){
-            throw new MissingMessageExceptions("Missing message to start today. SendSchedule is false or group state is off");
+            throw new MissingMessageException("Missing message to start today. SendSchedule is false or group state is off");
         }
 
-        StringBuilder formatString = new StringBuilder("<strong>" + dayOfWeek[zdt.getDayOfWeek().getValue()] + ", " + zdt.format(DateTimeFormatter.ofPattern("dd.MM")) + " (" + (weekNumber - 33) + " тиждень навчання) </strong>\n");
+        StringBuilder formatString = new StringBuilder("<strong>" + dayOfWeek[zdt.getDayOfWeek().getValue()] + ", " + zdt.format(DateTimeFormatter.ofPattern("dd.MM")) + " (" + (weekNumber - startWeekNumber) + " тиждень навчання) </strong>\n");
 
         formatString
                 .append("\n<code>Розклад пар(")
@@ -94,13 +93,13 @@ public class ScheduleController {
         } else {
 
             if (!ChatConfig.isSaturdayLesson){
-                throw new MissingMessageExceptions("There are no lessons on Saturdays.");
+                throw new MissingMessageException("There are no lessons on Saturdays.");
             }
 
             // 34 - 1 субота
             if (weekNumber - 33 < 0){
                 group.getSettings().setDailyNotification(false);
-                throw new MissingMessageExceptions("Missing message to start today. If this is an error, fix it. Sunday is < 0");
+                throw new MissingMessageException("Missing message to start today. If this is an error, fix it. Sunday is < 0");
             }
 
 
@@ -110,7 +109,7 @@ public class ScheduleController {
                 equivalent = ScheduleController.getEquivalentForSaturdayLessons(weekNumber);
             } catch (Exception e){
                 formatString
-                        .append("Графіки суботніх пар cкінчились, вся інформація у викладачів.  </code>");
+                        .append("Графіки суботніх пар закінчились, вся інформація у викладачів.  </code>");
                 return formatString.toString();
             }
             formatString
@@ -168,12 +167,12 @@ public class ScheduleController {
      * @param zdt дата для перевірки
      * @return String - текст повідомлення.
      *         Object[][] - інлайн кнопки, за відсутності - null
-     * @throws MissingMessageExceptions якщо не потрібно нічого надсилати.
+     * @throws MissingMessageException якщо не потрібно нічого надсилати.
      */
-    public static Pair<String, Object[][]> getMessageForCurrentLesson(Group group, ZonedDateTime zdt) throws MissingMessageExceptions {
+    public static Pair<String, Object[][]> getMessageForCurrentLesson(Group group, ZonedDateTime zdt) throws MissingMessageException {
 
         if (!sendSchedule){
-            throw new MissingMessageExceptions("");
+            throw new MissingMessageException("");
         }
 
         for (ScheduleTime time : notificationSchedule){
@@ -183,7 +182,7 @@ public class ScheduleController {
                     group.getSettings().isState()){
                 
                 if (zdt.getDayOfWeek() == DayOfWeek.SUNDAY){
-                    throw new MissingMessageExceptions("");
+                    throw new MissingMessageException("");
                 }
 
                 int weekNumber = zdt.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
@@ -195,13 +194,13 @@ public class ScheduleController {
                 if (zdt.getDayOfWeek() == DayOfWeek.SATURDAY) {
 
                     if (!ChatConfig.isSaturdayLesson){
-                        throw new MissingMessageExceptions("");
+                        throw new MissingMessageException("");
                     }
 
                     // 34 - 1 субота
                     if (weekNumber-33 < 0 || weekNumber-33 > 13){
                         group.getSettings().setDailyNotification(false);
-                        throw new MissingMessageExceptions("");
+                        throw new MissingMessageException("");
                     } else {
 
                         Pair<DayOfWeek, Integer> equivalent = ScheduleController.getEquivalentForSaturdayLessons(weekNumber);
@@ -221,7 +220,7 @@ public class ScheduleController {
                         group.getSettings().setDailyNotification(false);
                     }
 
-                    throw new MissingMessageExceptions("");
+                    throw new MissingMessageException("");
 
                 } else {
                     firstGroupSubject = currentSubject.getValue0().getValue0();
@@ -248,9 +247,10 @@ public class ScheduleController {
 
                                     // update table Subject with new values
                                     try {
-                                        updateValues(group.getSheetId(), "ПРЕДМЕТИ!A3:H30", group.getSchedule().getSubjectListTable());
+                                        GroupRepo.exportGroupSubjects(group, group.getSchedule().getSubjectListTable());
+
                                         logger.info("Updated Subject Sheet for {} in {}", group.getGroupName(), firstGroupSubject);
-                                    } catch (IOException | GeneralSecurityException e) {
+                                    } catch (Exception e) {
                                         logger.error("Failed to update Subject sheet data. SheetId = {}", group.getSheetId());
                                     }
                                 }
@@ -277,8 +277,10 @@ public class ScheduleController {
 
                                     // update table Subject with new values
                                     try {
-                                        updateValues(group.getSheetId(), "ПРЕДМЕТИ!A3:H30", group.getSchedule().getSubjectListTable());
-                                    } catch (IOException | GeneralSecurityException e) {
+                                        GroupRepo.exportGroupSubjects(group, group.getSchedule().getSubjectListTable());
+
+                                        logger.info("Updated Subject Sheet for {} in {}", group.getGroupName(), secondGroupSubject);
+                                    } catch (Exception e) {
                                         logger.error("Failed to update Subject sheet data. SheetId = {}", group.getSheetId());
                                     }
                                 }
@@ -331,8 +333,10 @@ public class ScheduleController {
 
                                 // update table Subject with new values
                                 try {
-                                    updateValues(group.getSheetId(), "ПРЕДМЕТИ!A3:H30", group.getSchedule().getSubjectListTable());
-                                } catch (IOException | GeneralSecurityException e) {
+                                    GroupRepo.exportGroupSubjects(group, group.getSchedule().getSubjectListTable());
+
+                                    logger.info("Updated Subject Sheet for {} in {}", group.getGroupName(), firstGroupSubject);
+                                } catch (Exception e) {
                                     logger.error("Failed to update Subject sheet data. SheetId = {}", group.getSheetId());
                                 }
                             }
@@ -347,24 +351,29 @@ public class ScheduleController {
                             group.getSettings().setDailyNotification(false);
                         }
 
-                        InlineKeyboardButton inbutton = new InlineKeyboardButton();
-                        inbutton.setText("Перейти в Meet");
+                        InlineKeyboardButton inlineButton = new InlineKeyboardButton();
+                        inlineButton.setText("Перейти в Meet");
 
                         if (firstGroupSubject.getLinkForFirstGroupAndGeneralLesson() == null){
                             return new Pair<>(formatString, null);
                         } else {
-                            inbutton.setUrl(firstGroupSubject.getLinkForFirstGroupAndGeneralLesson());
-                            return new Pair<>(formatString, new Object[][]{{inbutton}});
+                            inlineButton.setUrl(firstGroupSubject.getLinkForFirstGroupAndGeneralLesson());
+                            return new Pair<>(formatString, new Object[][]{{inlineButton}});
                         }
                     }
                 }
             }
         }
-        throw new MissingMessageExceptions("");
+        throw new MissingMessageException("");
     }
 
     public static class ScheduleTime{
         LocalTime timeNotification;
+
+        public LocalTime getTimeForReal() {
+            return timeForReal;
+        }
+
         LocalTime timeForReal;
         int numberOfLesson;
 

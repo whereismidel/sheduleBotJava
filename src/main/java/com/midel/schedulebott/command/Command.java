@@ -6,7 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.List;
 
 /**
- * Command abstarct class for handling telegram-bot commands.
+ * Command abstract class for handling telegram-bot commands.
  */
 public abstract class Command {
 
@@ -21,5 +21,4 @@ public abstract class Command {
      * @param update provided {@link Update} object with all the needed data for command.
      */
     public abstract void execute(Update update);
-
 }

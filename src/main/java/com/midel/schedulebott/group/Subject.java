@@ -26,16 +26,16 @@ public class Subject {
         this.noteForSecondGroup = noteForSecondGroup;
     }
 
-    Subject(String name, String linkForGeneralLesson, String noteForGeneralLesson){
-        this.name = name;
-        this.linkForFirstGroupAndGeneralLesson = linkForGeneralLesson;
-        this.linkForSecondGroup = linkForGeneralLesson;
-        this.noteForFirstGroupAndGeneralLesson = noteForGeneralLesson;
-        this.noteForSecondGroup = noteForGeneralLesson;
-    }
-
     Subject(String name){
         this.name = name;
+    }
+
+    public void copy(Subject subject) {
+        this.name = subject.name;
+        this.linkForFirstGroupAndGeneralLesson = subject.linkForFirstGroupAndGeneralLesson;
+        this.linkForSecondGroup = subject.linkForFirstGroupAndGeneralLesson;
+        this.noteForFirstGroupAndGeneralLesson = subject.noteForFirstGroupAndGeneralLesson;
+        this.noteForSecondGroup = subject.noteForFirstGroupAndGeneralLesson;
     }
 
     public String getName() {

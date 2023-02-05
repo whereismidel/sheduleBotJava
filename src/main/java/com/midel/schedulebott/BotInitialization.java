@@ -1,8 +1,9 @@
 package com.midel.schedulebott;
 
+import com.midel.schedulebott.config.ChatConfig;
 import com.midel.schedulebott.group.Group;
-import com.midel.schedulebott.group.GroupController;
-import com.midel.schedulebott.schedule.ScheduledTask;
+import com.midel.schedulebott.group.GroupRepo;
+import com.midel.schedulebott.student.StudentRepo;
 import com.midel.schedulebott.telegram.ScheduleBotChannel;
 import com.midel.schedulebott.telegram.SendMessage;
 import org.slf4j.Logger;
@@ -22,22 +23,51 @@ public class BotInitialization {
     private static final Logger logger = LoggerFactory.getLogger(BotInitialization.class);
     public static final ScheduleBotChannel scheduleBot = new ScheduleBotChannel();
 
+    public static boolean loadAndUpdateAllTables(){
+        if (!GroupRepo.importGroupList()){
+            return false;
+        }
+
+        if (!GroupRepo.importAllScheduleTables()){
+            return false;
+        }
+
+        if (!StudentRepo.importStudentList()){
+            return false;
+        }
+
+        return true;
+    }
+
     public static void main(String[] args) throws InterruptedException {
         while(true) {
             try {
+                SpringApplication.run(BotInitialization.class, args);
+
+                while (true){
+                    if (loadAndUpdateAllTables()){
+                        logger.info("Successful initiation of data from tables.");
+                        break;
+                    } else {
+                        try{
+                            logger.error("Failed to update data from tables Schedule and Subject. Retrying..");
+                            TimeUnit.SECONDS.sleep(15);
+                        } catch (InterruptedException e){
+                            logger.error("FATAL: Wait error while retrying table import request.", e);
+                            return;
+                        }
+                    }
+                }
+
                 TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
                 botsApi.registerBot(scheduleBot);
 
-                SpringApplication.run(BotInitialization.class, args);
-
-                logger.info("Successful connection to Telegram Bot.");
-
-                new ScheduledTask().initAndUpdateGroupListFromSheet();
-
-                for(Group group : GroupController.groups){
-                    new SendMessage().changeDescription(group.getChannelId(), "Тут ти можеш отримувати повідомлення, які пов'язані з розкладом. Будь-які пропозиції - @Midell");
+                for(Group group : GroupRepo.groups.values()){
+                    new SendMessage().changeDescription(group.getChannelId(), "Тут ти можеш отримувати повідомлення, які пов'язані з розкладом. Будь-які пропозиції - " + ChatConfig.creatorUsername);
+                    TimeUnit.SECONDS.sleep(1);
                 }
 
+                logger.info("Successful connection to Telegram Bot.");
                 return;
             } catch (TelegramApiException e) {
                 logger.error("Telegram connection failed. Reconnection...", e);

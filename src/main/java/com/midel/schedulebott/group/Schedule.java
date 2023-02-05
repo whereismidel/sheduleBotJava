@@ -10,7 +10,7 @@ import java.util.List;
 
 /*
 class Rescheduled {
-    LocalDate resheduledDate;
+    LocalDate rescheduledDate;
     int lessonNum;
 
     String rescheduledLessonName;

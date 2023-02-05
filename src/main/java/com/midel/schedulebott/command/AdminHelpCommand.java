@@ -15,9 +15,13 @@ public class AdminHelpCommand extends Command {
                     + "`%s` \\- ввімкнути\\/вимкнути надсилання розкладу по ВСІМ каналам\\. \n"
                     + "`%s` \\- \\(debug\\) перевірити розклад\\. \n"
                     + "`%s` \\- \\(debug\\) отримати інформацію про конкретну пару\\. \n"
-                    + "`%s` \\- надіслати повідомлення по групам\\. \n",
+                    + "`%s` \\- надіслати повідомлення по групам\\. \n"
+                    + "`%s` \\- видалити студента\\. \n"
+                    + "`%s` \\- примусово імпортувати таблицю \\\"Користувачі\\\"\\. \n"
+                    + "`%s` \\- примусово імпортувати таблицю \\\"Налаштування груп\\\"\\. \n",
             SWITCH_DEBUG.getCommandName(), SWITCH_SCHEDULE.getCommandName(), GET_SCHEDULE_FOR.getCommandName(),
-            GET_LESSON.getCommandName(), SEND_MESSAGE.getCommandName());
+            GET_LESSON.getCommandName(), SEND_MESSAGE.getCommandName(), DELETE_STUDENT.getCommandName(),
+            IMPORT_STUDENTS.getCommandName(), IMPORT_GROUPS.getCommandName());
 
     public AdminHelpCommand(SendMessage sendMessage){
         super(sendMessage);
