@@ -42,8 +42,10 @@ public class ScheduledTask {
                 group.setDeleteMessage(tomorrowID);
                 GroupRepo.exportGroupList();
 
+            } catch (MissingMessageException e){
+                logger.warn(e.getMessage());
             } catch (Exception e) {
-                logger.error("Failed to send schedule for tomorrow. {}", group, e);
+                logger.warn("Failed to send schedule for tomorrow. {}", group);
             }
 
             try {
@@ -88,7 +90,7 @@ public class ScheduledTask {
 
             try {
                 String message = ScheduleController.getMessageForStartOfNewDay(group, currentZonedDate);
-                new SendMessage().sendHTMLMessage(group.getChannelId(), message);
+                System.out.println(new SendMessage().sendHTMLMessage(group.getChannelId(), message));
 
                 if (group.getDeleteMessage() != null){
                     new SendMessage().deleteMessage(group.getChannelId(), group.getDeleteMessage());
@@ -107,7 +109,7 @@ public class ScheduledTask {
             try {
                 TimeUnit.MILLISECONDS.sleep(1500);
             } catch (InterruptedException e) {
-                logger.warn("Failed to set delay in schedule for tomorrow.", e);
+                logger.warn("Failed to set delay in schedule for today.", e);
             }
         }
         debugArray = null;

@@ -91,7 +91,8 @@ public class Group {
                 channelId == null?"null":channelId,
                 sheetId == null?"null":sheetId,
                 settings.isState() ? "on" : "off",
-                settings.getLastRequestToTable().toString())
+                settings.getLastRequestToTable().toString(),
+                deleteMessage == null?"null":deleteMessage)
         );
     }
 

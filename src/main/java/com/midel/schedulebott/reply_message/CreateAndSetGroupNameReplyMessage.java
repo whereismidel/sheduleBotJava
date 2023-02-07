@@ -27,7 +27,8 @@ public class CreateAndSetGroupNameReplyMessage extends ReplyMessage {
             +"Можливо ти помилився при введені або твій староста ще не створив її.";
 
     public static final String GROUP_NOT_CORRECT_MESSAGE = "<b>Вкажіть групу</b>\n"
-            +"Назва групи не повинна містити пробілів.";
+            +"Назва групи не повинна містити пробілів, а також будь-яких символів окрім: '-', '(', ')'.\n"
+            +"Обмеження на довжину назви - 10 символів";
     public static final String GROUP_ALREADY_EXIST_MESSAGE = "Група з такою назвою вже існує.\n"
             +"Якщо сталась помилка, і саме ти староста цієї групи звернись до " + ChatConfig.creatorUsername;
     public static final String ALREADY_HAVE_GROUP_MESSAGE = "За тобою вже закріплена група.\n"
@@ -49,7 +50,7 @@ public class CreateAndSetGroupNameReplyMessage extends ReplyMessage {
         try {
             Student student = StudentController.getStudentById(userId);
 
-            String groupName = update.getMessage().getText();
+            String groupName = update.getMessage().getText().toUpperCase();
 
             if (student != null) {
                 if (student.isLeader()) {
@@ -59,7 +60,7 @@ public class CreateAndSetGroupNameReplyMessage extends ReplyMessage {
                     if (GroupController.getGroupByName(groupName) == null) {
                         if (GroupController.getGroupByLeader(userId) == null) {
 
-                            if (!groupName.matches("^\\S*$")){
+                            if (groupName.length() > 10 || !groupName.matches("^[A-ZА-ЯІЇЄ\\-()0-9]*$")){
                                 sendMessage.replyMessage(userId, GROUP_NOT_CORRECT_MESSAGE);
                                 return;
                             }
