@@ -71,7 +71,7 @@ public class ScheduleController {
 
         int weekNumber = zdt.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
 
-        if (!sendSchedule || !group.getSettings().isState() || group.getSheetId() == null || weekNumber == 7){
+        if (!sendSchedule || !group.getSettings().isState() || group.getSheetId() == null || weekNumber - startWeekNumber < 0){
             throw new MissingMessageException("Missing message to start today. SendSchedule is false or group state is off");
         }
 
