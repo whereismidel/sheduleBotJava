@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -283,13 +282,6 @@ public class GroupTablesValidator {
         boolean isValid = true;
 
         try {
-            ArrayList<String> htmlSeq = new ArrayList<>(
-                    Arrays.asList(
-                            "<u>", "</u>",
-                            "<b>", "</b>",
-                            "<i>", "</i>"));
-
-
             if (group.getSchedule() == null || group.getSchedule().getSubjectList().size() == 0){
                 warning.add("Таблиця \"ПРЕДМЕТИ\" не містить жодного предмету.");
                 isValid = false;
@@ -304,16 +296,13 @@ public class GroupTablesValidator {
 
                     Subject subject = entry.getValue();
                     if (subject.getName() != null) {
-                        Matcher m = Pattern.compile("<(.+?)>").matcher(subject.getName());
-                        boolean error = false;
+                        String temp = Pattern
+                                .compile("(<[ubi]>[^<>/]+</[ubi]>)+")
+                                .matcher(subject.getName())
+                                .replaceAll("")
+                                .trim();
 
-                        while (m.find()) {
-                            if (!htmlSeq.contains(subject.getName().substring(m.start(), m.end()))) {
-                                error = true;
-                                break;
-                            }
-                        }
-                        if (error) {
+                        if (temp.contains("<") || temp.contains(">")){
                             warning.add("Помилково вказаний тег(читайте інструкцію) - " + subject.getName());
                             isValid = false;
                         }
@@ -323,30 +312,26 @@ public class GroupTablesValidator {
                     }
 
                     if (subject.getNoteForFirstGroupAndGeneralLesson() != null) {
-                        Matcher m = Pattern.compile("<(.+?)>").matcher(subject.getNoteForFirstGroupAndGeneralLesson());
-                        boolean error = false;
-                        while (m.find()) {
-                            if (!htmlSeq.contains(subject.getNoteForFirstGroupAndGeneralLesson().substring(m.start(), m.end()))) {
-                                error = true;
-                                break;
-                            }
-                        }
-                        if (error) {
+                        String temp = Pattern
+                                .compile("(<[ubi]>[^<>/]+</[ubi]>)+")
+                                .matcher(subject.getNoteForFirstGroupAndGeneralLesson())
+                                .replaceAll("")
+                                .trim();
+
+                        if (temp.contains("<") || temp.contains(">")){
                             warning.add("Помилково вказаний тег(читайте інструкцію) - " + subject.getNoteForFirstGroupAndGeneralLesson());
                             isValid = false;
                         }
                     }
 
                     if (subject.getNoteForSecondGroup() != null) {
-                        Matcher m = Pattern.compile("<(.+?)>").matcher(subject.getNoteForSecondGroup());
-                        boolean error = false;
-                        while (m.find()) {
-                            if (!htmlSeq.contains(subject.getNoteForSecondGroup().substring(m.start(), m.end()))) {
-                                error = true;
-                                break;
-                            }
-                        }
-                        if (error) {
+                        String temp = Pattern
+                                .compile("(<[ubi]>[^<>/]+</[ubi]>)+")
+                                .matcher(subject.getNoteForSecondGroup())
+                                .replaceAll("")
+                                .trim();
+
+                        if (temp.contains("<") || temp.contains(">")){
                             warning.add("Помилково вказаний тег(читайте інструкцію) - " + subject.getNoteForSecondGroup());
                             isValid = false;
                         }

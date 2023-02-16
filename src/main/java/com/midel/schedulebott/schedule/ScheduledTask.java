@@ -62,8 +62,6 @@ public class ScheduledTask {
         ZonedDateTime currentZonedDate = ZonedDateTime.now(ZoneId.of("Europe/Kiev"));
 
         for(Group group : GroupRepo.groups.values()) {
-            int lastMessage;
-
             group.getSettings().setDailyNotification(true);
 
             // DEBUG FUNCTIONS
@@ -90,7 +88,7 @@ public class ScheduledTask {
 
             try {
                 String message = ScheduleController.getMessageForStartOfNewDay(group, currentZonedDate);
-                System.out.println(new SendMessage().sendHTMLMessage(group.getChannelId(), message));
+                new SendMessage().sendHTMLMessage(group.getChannelId(), message);
 
                 if (group.getDeleteMessage() != null){
                     new SendMessage().deleteMessage(group.getChannelId(), group.getDeleteMessage());
@@ -173,5 +171,10 @@ public class ScheduledTask {
             }
         }
         debugArray = null;
+    }
+
+    @Scheduled(cron = "0 12 20 ? * *", zone = "Europe/Kiev")
+    public void test() {
+        new SendMessage().sendTextMessage(ChatConfig.ADMINS.get(0), "Я працюю блін");
     }
 }

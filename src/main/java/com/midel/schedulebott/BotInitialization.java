@@ -1,11 +1,8 @@
 package com.midel.schedulebott;
 
-import com.midel.schedulebott.config.ChatConfig;
-import com.midel.schedulebott.group.Group;
 import com.midel.schedulebott.group.GroupRepo;
 import com.midel.schedulebott.student.StudentRepo;
 import com.midel.schedulebott.telegram.ScheduleBotChannel;
-import com.midel.schedulebott.telegram.SendMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -62,16 +59,11 @@ public class BotInitialization {
                 TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
                 botsApi.registerBot(scheduleBot);
 
-                for(Group group : GroupRepo.groups.values()){
-                    new SendMessage().changeDescription(group.getChannelId(), "Тут ти можеш отримувати повідомлення, які пов'язані з розкладом. Будь-які пропозиції - " + ChatConfig.creatorUsername);
-                    TimeUnit.SECONDS.sleep(1);
-                }
-
                 logger.info("Successful connection to Telegram Bot.");
                 return;
             } catch (TelegramApiException e) {
                 logger.error("Telegram connection failed. Reconnection...", e);
-                TimeUnit.SECONDS.sleep(5);
+                TimeUnit.SECONDS.sleep(30);
             }
         }
     }

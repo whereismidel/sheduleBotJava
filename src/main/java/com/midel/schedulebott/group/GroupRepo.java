@@ -263,14 +263,14 @@ public class GroupRepo {
 
                         // lessons of the first week start from line 0 to 5 in the parsing list
                         dayForFirstWeek.add(new Pair<>(
-                                String.valueOf(valuesFromGroupSchedule.get(lesson).get(dayCells + 1)), // lesson for first subgroup
-                                String.valueOf(valuesFromGroupSchedule.get(lesson).get(dayCells + 2))  // lesson for second subgroup
+                                String.valueOf(valuesFromGroupSchedule.get(lesson).get(dayCells + 1)).trim(), // lesson for first subgroup
+                                String.valueOf(valuesFromGroupSchedule.get(lesson).get(dayCells + 2)).trim()  // lesson for second subgroup
                         ));
 
                         // lessons for the second week start from line 6 to 11 in the parsing list
                         dayForSecondWeek.add(new Pair<>(
-                                String.valueOf(valuesFromGroupSchedule.get(lesson + 6).get(dayCells + 1)), // lesson for first subgroup
-                                String.valueOf(valuesFromGroupSchedule.get(lesson + 6).get(dayCells + 2))  // lesson for second subgroup
+                                String.valueOf(valuesFromGroupSchedule.get(lesson + 6).get(dayCells + 1)).trim(), // lesson for first subgroup
+                                String.valueOf(valuesFromGroupSchedule.get(lesson + 6).get(dayCells + 2)).trim()  // lesson for second subgroup
                         ));
                     }
 

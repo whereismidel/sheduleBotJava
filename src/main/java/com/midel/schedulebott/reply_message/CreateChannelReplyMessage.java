@@ -41,9 +41,11 @@ public class CreateChannelReplyMessage extends ReplyMessage {
                 group.setChannelId(memberUpdated.getChat().getId().toString());
 
                 int message = sendMessage.sendHTMLMessage(group.getChannelId(), "Перевірка можливості надсилання повідомлень.");
+
                 if (message == -1 || !sendMessage.deleteMessage(group.getChannelId(),message)){
                     throw new Exception();
                 }
+                new SendMessage().changeDescription(group.getChannelId(), "Тут ти можеш отримувати повідомлення, які пов'язані з розкладом. Будь-які пропозиції - " + ChatConfig.creatorUsername);
 
                 if (!GroupRepo.exportGroupList()) {
                     throw new Exception();

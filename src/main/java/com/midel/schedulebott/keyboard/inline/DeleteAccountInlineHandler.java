@@ -27,7 +27,6 @@ public class DeleteAccountInlineHandler extends InlineKeyboardHandler {
             sendMessage.sendHTMLMessage(userId, SUCCESSFUL_DELETE_MESSAGE);
         } else {
             sendMessage.sendHTMLMessage(userId, FAILED_DELETE_MESSAGE);
-            System.out.println(student);
         }
 
         sendMessage.deleteMessage(userId, messageId);
