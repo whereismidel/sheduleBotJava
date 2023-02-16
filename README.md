@@ -6,7 +6,7 @@ Required environment variables: `BOT_NAME`, `BOT_TOKEN`, `CLIENT_SECRET`
 
 Build:
 ```bash
-$ docker build -t schedulebot . -f docker/app.Dockerfile
+$ docker build -t schedulebot . -f Dockerfile
 ```
 
 Run:
