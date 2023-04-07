@@ -1,11 +1,13 @@
 package com.midel.schedulebott.command;
 
+import com.midel.schedulebott.command.annotation.UserCommand;
 import com.midel.schedulebott.keyboard.inline.InlineKeyboardAnswer;
 import com.midel.schedulebott.student.Student;
 import com.midel.schedulebott.student.StudentController;
 import com.midel.schedulebott.telegram.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+@UserCommand
 public class RestartCommand extends Command {
 
     public final static String UNREGISTERED_WARNING_MESSAGE = "Ти ще не зареєструвався.\n"
@@ -44,7 +46,8 @@ public class RestartCommand extends Command {
                     new Object[][]{
                             {InlineKeyboardAnswer.DELETE_ACCOUNT_YES},
                             {InlineKeyboardAnswer.DELETE_ACCOUNT_NO}
-                    });
+                    },
+                    null);
         }
 
     }

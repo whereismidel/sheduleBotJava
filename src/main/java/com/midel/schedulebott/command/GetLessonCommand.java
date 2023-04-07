@@ -16,7 +16,7 @@ import static com.midel.schedulebott.config.ChatConfig.debug;
  * GetLesson {@link Command}.
  */
 @AdminCommand
-public class GetLessonCommand extends Command{
+public class  GetLessonCommand extends Command{
 
     public final static String INVALID_ARGUMENT_MESSAGE = "Невірно вказані аргументи або їх кількість або виключений режим відладки. \n"
                                                             +"/getLesson - для довідки.";

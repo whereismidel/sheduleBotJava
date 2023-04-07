@@ -2,6 +2,10 @@ package com.midel.schedulebott.group;
 
 public class Subject {
     private String name;
+    private String lecturerForFirstGroupAndGeneralLesson;
+    private String lecturerForSecondGroup;
+    private String auditoryForFirstGroupAndGeneralLesson;
+    private String auditoryForSecondGroup;
     private String linkForFirstGroupAndGeneralLesson;
     private String linkForSecondGroup;
     private String noteForFirstGroupAndGeneralLesson;
@@ -10,71 +14,84 @@ public class Subject {
     @Override
     public String toString() {
         return "Subject{" +
-                "name='" + name + '\'' +
-                ", linkForFirstGroupAndGeneralLesson='" + linkForFirstGroupAndGeneralLesson + '\'' +
-                ", linkForSecondGroup='" + linkForSecondGroup + '\'' +
-                ", noteForFirstGroupAndGeneralLesson='" + noteForFirstGroupAndGeneralLesson + '\'' +
-                ", noteForSecondGroup='" + noteForSecondGroup + '\'' +
+                "name=" + name +
+                ", lecturerForFirstGroupAndGeneralLesson=" + lecturerForFirstGroupAndGeneralLesson +
+                ", lecturerForSecondGroup=" + lecturerForSecondGroup +
+                ", auditoryForFirstGroupAndGeneralLesson=" + auditoryForFirstGroupAndGeneralLesson +
+                ", auditoryForSecondGroup=" + auditoryForSecondGroup +
+                ", linkForFirstGroupAndGeneralLesson=" + linkForFirstGroupAndGeneralLesson +
+                ", linkForSecondGroup=" + linkForSecondGroup +
+                ", noteForFirstGroupAndGeneralLesson=" + noteForFirstGroupAndGeneralLesson +
+                ", noteForSecondGroup=" + noteForSecondGroup +
                 '}';
     }
 
-    Subject(String name, String linkForFirstGroupAndGeneralLesson, String noteForFirstGroupAndGeneralLesson, String linkForSecondGroup, String noteForSecondGroup) {
+    Subject(String name,
+            String linkForFirstGroupAndGeneralLesson, String noteForFirstGroupAndGeneralLesson,
+            String lecturerForFirstGroupAndGeneralLesson, String auditoryForFirstGroupAndGeneralLesson,
+            String linkForSecondGroup, String noteForSecondGroup,
+            String lecturerForSecondGroup, String auditoryForSecondGroup) {
         this.name = name;
-        this.linkForFirstGroupAndGeneralLesson = linkForFirstGroupAndGeneralLesson;
-        this.linkForSecondGroup = linkForSecondGroup;
-        this.noteForFirstGroupAndGeneralLesson = noteForFirstGroupAndGeneralLesson;
-        this.noteForSecondGroup = noteForSecondGroup;
-    }
 
-    Subject(String name){
-        this.name = name;
+        this.lecturerForFirstGroupAndGeneralLesson = lecturerForFirstGroupAndGeneralLesson;
+        this.auditoryForFirstGroupAndGeneralLesson = auditoryForFirstGroupAndGeneralLesson;
+        this.linkForFirstGroupAndGeneralLesson = linkForFirstGroupAndGeneralLesson;
+        this.noteForFirstGroupAndGeneralLesson = noteForFirstGroupAndGeneralLesson;
+
+        this.lecturerForSecondGroup = lecturerForSecondGroup;
+        this.auditoryForSecondGroup = auditoryForSecondGroup;
+        this.linkForSecondGroup = linkForSecondGroup;
+        this.noteForSecondGroup = noteForSecondGroup;
     }
 
     public void copy(Subject subject) {
         this.name = subject.name;
+
+        this.lecturerForFirstGroupAndGeneralLesson = subject.lecturerForFirstGroupAndGeneralLesson;
+        this.auditoryForFirstGroupAndGeneralLesson = subject.auditoryForFirstGroupAndGeneralLesson;
         this.linkForFirstGroupAndGeneralLesson = subject.linkForFirstGroupAndGeneralLesson;
-        this.linkForSecondGroup = subject.linkForFirstGroupAndGeneralLesson;
         this.noteForFirstGroupAndGeneralLesson = subject.noteForFirstGroupAndGeneralLesson;
-        this.noteForSecondGroup = subject.noteForFirstGroupAndGeneralLesson;
+
+        this.lecturerForSecondGroup = subject.lecturerForSecondGroup;
+        this.auditoryForSecondGroup = subject.auditoryForSecondGroup;
+        this.linkForSecondGroup = subject.linkForSecondGroup;
+        this.noteForSecondGroup = subject.noteForSecondGroup;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getLinkForFirstGroupAndGeneralLesson() {
         return linkForFirstGroupAndGeneralLesson;
-    }
-
-    public void setLinkForFirstGroupAndGeneralLesson(String linkForFirstGroupAndGeneralLesson) {
-        this.linkForFirstGroupAndGeneralLesson = linkForFirstGroupAndGeneralLesson;
     }
 
     public String getLinkForSecondGroup() {
         return linkForSecondGroup;
     }
 
-    public void setLinkForSecondGroup(String linkForSecondGroup) {
-        this.linkForSecondGroup = linkForSecondGroup;
-    }
-
     public String getNoteForFirstGroupAndGeneralLesson() {
         return noteForFirstGroupAndGeneralLesson;
-    }
-
-    public void setNoteForFirstGroupAndGeneralLesson(String noteForFirstGroupAndGeneralLesson) {
-        this.noteForFirstGroupAndGeneralLesson = noteForFirstGroupAndGeneralLesson;
     }
 
     public String getNoteForSecondGroup() {
         return noteForSecondGroup;
     }
 
-    public void setNoteForSecondGroup(String noteForSecondGroup) {
-        this.noteForSecondGroup = noteForSecondGroup;
+    public String getLecturerForFirstGroupAndGeneralLesson() {
+        return lecturerForFirstGroupAndGeneralLesson;
     }
+
+    public String getLecturerForSecondGroup() {
+        return lecturerForSecondGroup;
+    }
+
+    public String getAuditoryForFirstGroupAndGeneralLesson() {
+        return auditoryForFirstGroupAndGeneralLesson;
+    }
+
+    public String getAuditoryForSecondGroup() {
+        return auditoryForSecondGroup;
+    }
+
 }

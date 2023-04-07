@@ -80,11 +80,11 @@ public class GroupTablesValidator {
 
                 for (Pair<String, String> lesson : day) {
                     // Перевірка на відсутність заборонених символів
-                    if (!lesson.getValue0().matches("^[A-Za-zA-Яа-яіїґ\\-\\s']*$")) {
+                    if (!lesson.getValue0().matches("^[A-Za-zA-Яа-яіїґ\\-.'`\\s]*$")) {
                         warning.add("I тижд. - Заборонені символи в назвах пар. Дозволені знаки: тире, крапка, апостроф (" + lesson.getValue0() + ")");
                         isValid = false;
                     }
-                    if (!lesson.getValue1().matches("^[A-Za-zA-Яа-яіїґ\\-\\s']*$")) {
+                    if (!lesson.getValue1().matches("^[A-Za-zA-Яа-яіїґ\\-.'`\\s]*$")) {
                         warning.add("I тижд. - Заборонені символи в назвах пар. Дозволені знаки: тире, крапка, апостроф (" + lesson.getValue1() + ")");
                         isValid = false;
                     }
@@ -151,11 +151,11 @@ public class GroupTablesValidator {
 
                 for (Pair<String, String> lesson : day) {
                     // Перевірка на відсутність заборонених символів
-                    if (!lesson.getValue0().matches("^[A-Za-zA-Яа-яіїґ\\-\\s']*$")) {
+                    if (!lesson.getValue0().matches("^[A-Za-zA-Яа-яіїґ\\-.'`\\s]*$")) {
                         warning.add("II тижд. - Заборонені символи в назвах пар. Дозволені знаки: тире, крапка, апостроф (" + lesson.getValue0() + ")");
                         isValid = false;
                     }
-                    if (!lesson.getValue1().matches("^[A-Za-zA-Яа-яіїґ\\-\\s']*$")) {
+                    if (!lesson.getValue1().matches("^[A-Za-zA-Яа-яіїґ\\-.'`\\s]*$")) {
                         warning.add("II тижд. - Заборонені символи в назвах пар. Дозволені знаки: тире, крапка, апостроф (" + lesson.getValue1() + ")");
                         isValid = false;
                     }
@@ -212,6 +212,7 @@ public class GroupTablesValidator {
             return new Pair<>(true, null);
         } else {
             logger.info("Validation of table \"РОЗКЛАД\" failed. Group = {}", group.getGroupName());
+            System.out.println(warning);
             return new Pair<>(false, warning);
         }
     }
@@ -311,29 +312,27 @@ public class GroupTablesValidator {
                         isValid = false;
                     }
 
-                    if (subject.getNoteForFirstGroupAndGeneralLesson() != null) {
-                        String temp = Pattern
-                                .compile("(<[ubi]>[^<>/]+</[ubi]>)+")
-                                .matcher(subject.getNoteForFirstGroupAndGeneralLesson())
-                                .replaceAll("")
-                                .trim();
+                    List<String> checkMarkup = Arrays.asList(
+                            subject.getNoteForFirstGroupAndGeneralLesson(),
+                            subject.getLecturerForFirstGroupAndGeneralLesson(),
+                            subject.getAuditoryForFirstGroupAndGeneralLesson(),
+                            subject.getNoteForSecondGroup(),
+                            subject.getLecturerForSecondGroup(),
+                            subject.getAuditoryForSecondGroup()
+                    );
 
-                        if (temp.contains("<") || temp.contains(">")){
-                            warning.add("Помилково вказаний тег(читайте інструкцію) - " + subject.getNoteForFirstGroupAndGeneralLesson());
-                            isValid = false;
-                        }
-                    }
+                    for (String check : checkMarkup){
+                        if (check != null) {
+                            String temp = Pattern
+                                    .compile("(<[ubi]>[^<>/]+</[ubi]>)+")
+                                    .matcher(check)
+                                    .replaceAll("")
+                                    .trim();
 
-                    if (subject.getNoteForSecondGroup() != null) {
-                        String temp = Pattern
-                                .compile("(<[ubi]>[^<>/]+</[ubi]>)+")
-                                .matcher(subject.getNoteForSecondGroup())
-                                .replaceAll("")
-                                .trim();
-
-                        if (temp.contains("<") || temp.contains(">")){
-                            warning.add("Помилково вказаний тег(читайте інструкцію) - " + subject.getNoteForSecondGroup());
-                            isValid = false;
+                            if (temp.contains("<") || temp.contains(">")){
+                                warning.add("Помилково вказаний тег(читайте інструкцію) - " + check);
+                                isValid = false;
+                            }
                         }
                     }
                 }

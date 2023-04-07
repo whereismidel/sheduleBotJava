@@ -15,12 +15,12 @@ import static com.midel.schedulebott.google.SheetAPI.readSheetForRange;
 import static com.midel.schedulebott.google.SheetAPI.updateValues;
 
 public class StudentRepo {
-    public static Map<String, Student> students = new HashMap<>();
+    public static final Map<String, Student> students = new HashMap<>();
     static final Logger logger = LoggerFactory.getLogger(StudentRepo.class);
 
     public static boolean importStudentList() {
         try {
-            List<List<Object>> valuesFromStudents = readSheetForRange(DBConfig.groupAndStudentListSpreadsheet, DBConfig.studentsListRange);
+            List<List<Object>> valuesFromStudents = readSheetForRange(DBConfig.adminPanelInfoSheet, DBConfig.studentsListRange);
 
             if (valuesFromStudents == null || valuesFromStudents.isEmpty()) {
                 logger.warn("No data found in \"Користувачі\"");
@@ -62,7 +62,7 @@ public class StudentRepo {
             }
             studentToExport.add(new ArrayList<>(Collections.nCopies((int) DBConfig.studentsEdge - 64, "")));
 
-            if (updateValues(DBConfig.groupAndStudentListSpreadsheet, DBConfig.studentsListRange, studentToExport)){
+            if (updateValues(DBConfig.adminPanelInfoSheet, DBConfig.studentsListRange, studentToExport)){
                 logger.info("Successful export of the table \"Користувачі\".");
                 return true;
             } else {

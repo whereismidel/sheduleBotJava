@@ -28,6 +28,7 @@ public class GoogleAPIService {
     private static GoogleCredentials authorize() throws IOException, MissingCredentialFileException {
         GoogleCredentials googleCredentials;
 
+        // (InputStream inputSteam = GoogleAPIService.class.getResourceAsStream("/credentials_service.json")) {
         try(InputStream inputSteam = new ByteArrayInputStream(BotConfig.GOOGLE_CREDENTIALS.getBytes())) {
             googleCredentials = GoogleCredentials.fromStream(inputSteam).createScoped(SCOPES);
         }

@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
  */
 public abstract class ReplyKeyboardCommand {
 
-    public SendMessage sendMessage;
+    public final SendMessage sendMessage;
     public ReplyKeyboardCommand(SendMessage sendMessage){
         this.sendMessage = sendMessage;
     }

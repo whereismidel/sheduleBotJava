@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class SheetAPI {
 
     public static final Logger logger = LoggerFactory.getLogger(SheetAPI.class);
-    private static Sheets sheetService;
+    public static Sheets sheetService;
 
     private static void getSheetService() {
         try {

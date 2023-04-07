@@ -5,3 +5,4 @@ mvnw.cmd
 /logs/
 /src/main/resources/credentials_service.json
 /src/main/resources/test
+/src/test/

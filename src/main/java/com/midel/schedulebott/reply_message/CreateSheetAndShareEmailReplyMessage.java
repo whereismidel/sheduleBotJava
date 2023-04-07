@@ -38,7 +38,7 @@ public class CreateSheetAndShareEmailReplyMessage extends ReplyMessage {
             +"Ось посилання(доступ з %s): <a href=\"%s\"><b>ТИЦЬ</b></a>\n\n"
             +"Заповни таблюці згідно з інструкцій, які вказані в самій таблиці.\n"
             +"Обов'язково дотримуйся правил заповнення, "
-            +"<a href=\"https://docs.google.com/spreadsheets/d/1wVYfeBMirI0Rd8QmEQ8HFAxhI_R4sUhsGixFt3BLjF4\">для прикладу можеш використати ось цю таблицю</a>\n"
+            +"<a href=\"https://docs.google.com/spreadsheets/d/1FVmao8k5YM3VKqQDeAQxQPM8LI_WCiS8AN8lMwXbwLc\">для прикладу можеш використати ось цю таблицю</a>\n"
             +"Для <b>активації</b> розкладу в \"Меню старости\" потрібно <b>ввімкнути відправку розкладу</b>.\n\n"
             +"Також тобі відкрився повний доступ до \"Меню старости\". Ознайомся з ним";
 

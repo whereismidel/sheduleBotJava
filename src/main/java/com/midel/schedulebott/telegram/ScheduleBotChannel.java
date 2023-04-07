@@ -18,8 +18,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.midel.schedulebott.command.CommandName.FLOOD;
-import static com.midel.schedulebott.command.CommandName.NO;
+import static com.midel.schedulebott.command.CommandName.*;
 
 @Component
 public class ScheduleBotChannel extends TelegramLongPollingBot {
@@ -78,7 +77,7 @@ public class ScheduleBotChannel extends TelegramLongPollingBot {
 
             if (StudentController.isFlood(chatId)){
                 commandContainer
-                        .retrieveCommand(FLOOD.getCommandName(), null, chatId)
+                        .retrieveCommand(FLOOD.getCommandName(), null, update)
                         .execute(update);
                 return;
             }
@@ -88,7 +87,7 @@ public class ScheduleBotChannel extends TelegramLongPollingBot {
                     text = text.replace("@" + BotConfig.BOT_USERNAME, "");
                 } else {
                     commandContainer
-                            .retrieveCommand(NO.getCommandName(), null, chatId)
+                            .retrieveCommand(IGNORE_COMMAND.getCommandName(), null, update)
                             .execute(update);
 
                     return;
@@ -102,7 +101,7 @@ public class ScheduleBotChannel extends TelegramLongPollingBot {
                     List<String> arguments = Arrays.asList(split).subList(1, split.length);
 
                     commandContainer
-                            .retrieveCommand(commandIdentifier, arguments, chatId)
+                            .retrieveCommand(commandIdentifier, arguments, update)
                             .execute(update);
                 } else if (text.startsWith(BUTTON_PREFIX)) {
                     replyKeyboardContainer
@@ -110,18 +109,19 @@ public class ScheduleBotChannel extends TelegramLongPollingBot {
                             .execute(update);
                 } else if (message.getReplyToMessage() != null) {
                     String replyKey = message.getReplyToMessage().getText().split("\n")[0];
-
+                    update.getMessage().setText(text);
+                    update.setMessage(update.getMessage());
                     replyMessageContainer
                             .retrieveCommand(replyKey)
                             .execute(update);
                 } else {
                     commandContainer
-                            .retrieveCommand(NO.getCommandName(), null, chatId)
+                            .retrieveCommand(NO.getCommandName(), null, update)
                             .execute(update);
                 }
             } catch (Exception e){
                 commandContainer
-                        .retrieveCommand(NO.getCommandName(), null, chatId)
+                        .retrieveCommand(NO.getCommandName(), null, update)
                         .execute(update);
                 logger.error("Command execution error {}", text, e);
             }

@@ -11,7 +11,7 @@ import java.util.List;
 public abstract class Command {
 
     public List<String> arguments = null;
-    public SendMessage sendMessage;
+    public final SendMessage sendMessage;
     public Command(SendMessage sendMessage){
         this.sendMessage = sendMessage;
     }

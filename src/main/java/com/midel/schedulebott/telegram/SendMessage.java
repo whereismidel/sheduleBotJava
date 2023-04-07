@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.SetChatDescription;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -101,51 +102,23 @@ public class SendMessage {
      * @param buttons provided inline buttons to be attached to the message.
      *
      */
-    public void sendInlineKeyboard(String chatId, String messageText, Object[][] buttons) {
+    public long sendInlineKeyboard(String chatId, String messageText, Object[][] buttons, String userData) {
         org.telegram.telegrambots.meta.api.methods.send.SendMessage sendMessage = new org.telegram.telegrambots.meta.api.methods.send.SendMessage();
         sendMessage.setChatId(chatId);
 
         sendMessage.enableHtml(true);
         sendMessage.disableWebPagePreview();
 
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-
-        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-
-        for (Object[] rows : buttons) {
-            List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
-            for (Object button : rows) {
-                if (button != null) {
-                    if (button.getClass() == Pair.class) {
-                        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
-                        Pair<?, ?> pair = (Pair<?, ?>) button;
-                        inlineKeyboardButton.setText(String.valueOf(pair.getValue0()));
-                        inlineKeyboardButton.setCallbackData(String.valueOf(pair.getValue1()));
-
-                        keyboardButtonsRow.add(inlineKeyboardButton);
-                    } else if (button.getClass() == InlineKeyboardButton.class) {
-                        keyboardButtonsRow.add((InlineKeyboardButton) button);
-                    } else if (button.getClass() == InlineKeyboardAnswer.class) {
-                        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
-                        inlineKeyboardButton.setText(((InlineKeyboardAnswer) button).getCallbackText());
-                        inlineKeyboardButton.setCallbackData(((InlineKeyboardAnswer) button).getCallbackData());
-
-                        keyboardButtonsRow.add(inlineKeyboardButton);
-                    }
-                }
-            }
-            rowList.add(keyboardButtonsRow);
-        }
-
-        inlineKeyboardMarkup.setKeyboard(rowList);
+        InlineKeyboardMarkup inlineKeyboardMarkup = getInlineKeyboardMarkup(buttons, userData);
 
         sendMessage.setText(messageText);
         sendMessage.setReplyMarkup(inlineKeyboardMarkup);
 
         try {
-            scheduleBot.execute(sendMessage);
+            return scheduleBot.execute(sendMessage).getMessageId();
         } catch (TelegramApiException e) {
             logger.error("Failed to send INLINE message. ChatID = {} Buttons = {}", chatId, buttons, e);
+            return -1;
         }
     }
 
@@ -297,6 +270,61 @@ public class SendMessage {
             logger.error("Failed to send reply message. ChatID = {}", chatId, e);
             return -1;
         }
+    }
+
+    public boolean editMessage(String chatId, int messageId, String newText, InlineKeyboardMarkup inlineKeyboardMarkup){
+        EditMessageText editMessageText = new EditMessageText();
+
+        editMessageText.setChatId(chatId);
+        editMessageText.setMessageId(messageId);
+        editMessageText.setText(newText);
+        editMessageText.setParseMode("HTML");
+
+        if (inlineKeyboardMarkup != null){
+            editMessageText.setReplyMarkup(inlineKeyboardMarkup);
+        }
+
+        try {
+            scheduleBot.execute(editMessageText);
+            return true;
+        } catch (TelegramApiException e) {
+            return false;
+        }
+    }
+
+    public InlineKeyboardMarkup getInlineKeyboardMarkup(Object[][] buttons, String userData){
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
+        userData = userData != null?"#"+userData:"";
+        for (Object[] rows : buttons) {
+            List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
+            for (Object button : rows) {
+                if (button != null) {
+                    if (button.getClass() == Pair.class) {
+                        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+                        Pair<?, ?> pair = (Pair<?, ?>) button;
+                        inlineKeyboardButton.setText(String.valueOf(pair.getValue0()));
+                        inlineKeyboardButton.setCallbackData(pair.getValue1() + userData);
+
+                        keyboardButtonsRow.add(inlineKeyboardButton);
+                    } else if (button.getClass() == InlineKeyboardButton.class) {
+                        keyboardButtonsRow.add((InlineKeyboardButton) button);
+                    } else if (button.getClass() == InlineKeyboardAnswer.class) {
+                        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+                        inlineKeyboardButton.setText(((InlineKeyboardAnswer) button).getCallbackText());
+                        inlineKeyboardButton.setCallbackData(((InlineKeyboardAnswer) button).getCallbackData() + userData);
+
+                        keyboardButtonsRow.add(inlineKeyboardButton);
+                    }
+                }
+            }
+            rowList.add(keyboardButtonsRow);
+        }
+
+        inlineKeyboardMarkup.setKeyboard(rowList);
+
+        return inlineKeyboardMarkup;
     }
 
 }

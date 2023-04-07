@@ -27,7 +27,8 @@ public class DeleteLeaderAccountReplyMessage extends ReplyMessage {
                     new Object[][]{
                             {InlineKeyboardAnswer.DELETE_ACCOUNT_YES},
                             {InlineKeyboardAnswer.DELETE_ACCOUNT_NO}
-                    });
+                    },
+                    null);
         } else {
             sendMessage.sendHTMLMessage(userId, FAILED_MESSAGE);
         }

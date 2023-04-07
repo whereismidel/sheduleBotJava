@@ -155,7 +155,7 @@ public class ScheduledTask {
                 if (message.getValue1() == null) {
                     new SendMessage().sendHTMLMessage(group.getChannelId(), message.getValue0());
                 } else {
-                     new SendMessage().sendInlineKeyboard(group.getChannelId(), message.getValue0(), message.getValue1());
+                     new SendMessage().sendInlineKeyboard(group.getChannelId(), message.getValue0(), message.getValue1(), null);
                 }
 
                 logger.debug("Successful submission of the schedule. GroupName = {}", group.getGroupName());

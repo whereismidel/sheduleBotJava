@@ -35,7 +35,7 @@ public class CreateAndSetGroupNameReplyMessage extends ReplyMessage {
             +"Якщо сталась помилка спробуй <code>/restart</code> або звернись до " + ChatConfig.creatorUsername;
     public static final String SUCCESSFUL_CREATE_MESSAGE = "Група успішно створена.";
     public static final String SUCCESSFUL_INSERTED_MESSAGE = "Група успішно встановлена. \n"
-            + "Тепер ти можеш користуватись командою <code>/розклад</code> без вказання групи.";
+            + "Тепер ти можеш користуватись командою <code>/sch</code> без вказання групи.";
     public static final String FAILED_CREATE_MESSAGE = "Під час створення сталась непередбачувана помилка.\n"
             +"Спробуй пізніше або звернись до " + ChatConfig.creatorUsername;
     public CreateAndSetGroupNameReplyMessage(SendMessage sendMessage) {
@@ -112,7 +112,6 @@ public class CreateAndSetGroupNameReplyMessage extends ReplyMessage {
                         } else {
                             sendMessage.replyMessage(userId, GROUP_NOT_FOUND_MESSAGE);
                         }
-                        new MenuCommand(sendMessage).execute(update);
                     }
                 }
             }

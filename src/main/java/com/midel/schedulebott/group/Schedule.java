@@ -74,12 +74,13 @@ public class Schedule {
                 ('value1' and 'value2') or ('value1' and '-') or ('-' and 'value2') -> different lesson
             */
 
+        // ToDo зробити підкласи для спільних предметів, різних і одинарних
         if (lessonForFirstGroup.equals("-") &&
                 (lessonForSecondGroup.equals("-") || lessonForSecondGroup.trim().equals(""))){
             return new Pair<>(null, isLastLesson(dayOfWeek, weekNumber, numberOfSubject));
         } else if (!lessonForFirstGroup.equals("-") && lessonForSecondGroup.trim().equals("")) {
                 Subject subject = getSubjectByName(lessonForFirstGroup);
-                subjects = new Pair<>(subject, new Subject("SAME"));
+                subjects = new Pair<>(subject, new Subject("SAME", null, null, null, null, null, null, null, null));
         } else {
             if (lessonForFirstGroup.equals("-"))
                 subjects = new Pair<>(null, getSubjectByName(lessonForSecondGroup));

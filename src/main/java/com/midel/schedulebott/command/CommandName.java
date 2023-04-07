@@ -18,12 +18,16 @@ public enum CommandName {
     GET_LESSON("/getlesson"),
     GET_SCHEDULE_FOR("/schedulefor"),
     SEND_MESSAGE("/sendmessage"),
-    GET_SCHEDULE_USER("/розклад"),
+    GET_SCHEDULE_USER("/sch"),
     SET_GROUP("/setgroup"),
     DELETE_STUDENT("/deletestudent"),
     RECREATE_STUDENT("/restart"),
     IMPORT_STUDENTS("/studentimport"),
-    IMPORT_GROUPS("/groupimport");
+    IMPORT_GROUPS("/groupimport"),
+    IGNORE_COMMAND("ignore"),
+    CREATE_QUEUE("/newqueue"),
+    ADD_TO_QUEUE("/addtoqueue"),
+    REMOVE_FROM_QUEUE("/removefromqueue");
 
     private final String commandName;
 

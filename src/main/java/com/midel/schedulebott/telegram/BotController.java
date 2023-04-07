@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class BotController {
     @RequestMapping("/")
     @ResponseBody
-    String home() {
+    public String home() {
         return "<center><strong>БОТ ПРАЦЮЄ</strong></center>";
     }
 }

@@ -24,17 +24,18 @@ public class ChatConfig {
     public static boolean sendSchedule = true;
 
     // за скільки до початку пари повідомляти про неї. ToDO
-    public static int scheduleTime = 5; // якщо змінювати - слідкувати, щоб крон вираз був кратний по хвилинам.
+    public static final int scheduleTime = 5; // якщо змінювати - слідкувати, щоб крон вираз був кратний по хвилинам.
 
 
     // Рік навчання
-    public static int year = 2023;
+    public static final int year = 2023;
     // Дата початку семестру
-    public static LocalDateTime startSemester = LocalDateTime.of(year,2,1,0,0);
+    public static final LocalDateTime startSemester = LocalDateTime.of(year,2,1,0,0);
     // Дата кінця семестру
-    public static LocalDateTime endSemester = LocalDateTime.of(year,6,30,23,59);
+    public static final LocalDateTime endSemester = LocalDateTime.of(year,6,30,23,59);
+    public static final int lessonDurabilityInMinute = 95;
     // Номер тижня від початку року, з якого почався семестр
-    public static long startWeekNumber =  WEEKS.between(LocalDateTime.of(year,1,1,0,0), startSemester);
+    public static final long startWeekNumber =  WEEKS.between(LocalDateTime.of(year,1,1,0,0), startSemester);
     // Чи потрібні пари по суботам
-    public static boolean isSaturdayLesson = false;
+    public static final boolean isSaturdayLesson = false;
 }

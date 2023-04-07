@@ -1,6 +1,7 @@
 package com.midel.schedulebott;
 
 import com.midel.schedulebott.group.GroupRepo;
+import com.midel.schedulebott.queue.QueueRepo;
 import com.midel.schedulebott.student.StudentRepo;
 import com.midel.schedulebott.telegram.ScheduleBotChannel;
 import org.slf4j.Logger;
@@ -17,6 +18,13 @@ import java.util.concurrent.TimeUnit;
 @SpringBootApplication
 @EnableScheduling
 public class BotInitialization {
+
+    /*
+        Зробити запит на заповнення таблиці з розкладом або дозволити кидати pdf з якої це буде робитись
+        Зробити базу розкладів і на основі неї заповнювати ним таблиці(свій iu для вибору групи, типу ФККПІ 344, з підсказками)
+    */
+
+
     private static final Logger logger = LoggerFactory.getLogger(BotInitialization.class);
     public static final ScheduleBotChannel scheduleBot = new ScheduleBotChannel();
 
@@ -30,6 +38,10 @@ public class BotInitialization {
         }
 
         if (!StudentRepo.importStudentList()){
+            return false;
+        }
+
+        if (!QueueRepo.importQueuesList()){
             return false;
         }
 

@@ -6,7 +6,6 @@ import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Permission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,40 +70,4 @@ public class DriveAPI {
         }
 
     }
-
-    /**
-     *
-     * @return Повертає ArrayList з Pair<назва файлу, id файлу>
-     */
-    public static File getFileInfoById(String fileId){
-        try {
-            getDriveService();
-
-            File file = driveService.files().get(fileId)
-                    .setFields("*")
-                    .execute();
-
-            if (file == null || file.isEmpty()) {
-                return null;
-            } else {
-                return file;
-            }
-        } catch (IOException e){
-            logger.error("Failed to get file from google disk. fileId = {}", fileId, e);
-            return null;
-        }
-    }
-
-    public static boolean deleteFile(String fileId){
-        try {
-            getDriveService();
-
-            driveService.files().delete(fileId).execute();
-            return true;
-        } catch (IOException e) {
-            logger.error("Failed to delete file with id = {}", fileId, e);
-            return false;
-        }
-    }
-
 }

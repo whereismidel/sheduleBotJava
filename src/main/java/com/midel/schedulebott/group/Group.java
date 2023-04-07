@@ -1,10 +1,6 @@
 package com.midel.schedulebott.group;
 
-import com.google.api.services.drive.model.File;
-
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 
 // Google Sheet -> List Group: admin_id(староста), channel_id(канал з розкладом), sheet_id(розклад і інформація про пару), settings_list(??)
@@ -15,19 +11,8 @@ public class Group {
     private String channelId;
     private String sheetId;
     private Integer deleteMessage;
-    private File sheetInfo;
     private final GroupSettings settings;
-    private Schedule schedule = new Schedule();
-
-    public Group(String groupName, String leaderId) {
-        this.groupName = groupName;
-        this.leaderId = leaderId;
-
-        schedule.setFirstWeek(new ArrayList<>());
-        schedule.setSecondWeek(new ArrayList<>());
-
-        settings = new GroupSettings();
-    }
+    private final Schedule schedule = new Schedule();
 
     public Group(String groupName, String leaderId, String leaderEmail, String channelId, String sheetId, Boolean state, LocalDateTime lastModifiedDate, Integer deleteMessage) {
         this.groupName = groupName;
@@ -100,16 +85,8 @@ public class Group {
         return groupName;
     }
 
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
-
     public String getLeaderId() {
         return leaderId;
-    }
-
-    public void setLeaderId(String leaderId) {
-        this.leaderId = leaderId;
     }
 
     public String getChannelId() {
@@ -132,26 +109,8 @@ public class Group {
         return schedule;
     }
 
-    public void setSchedule(Schedule schedule) {
-        this.schedule = schedule;
-    }
-
     public GroupSettings getSettings() {
         return settings;
-    }
-
-    public LocalDateTime getSheetInfoLastModifiedTime() {
-        if (sheetInfo != null){
-            return LocalDateTime.ofInstant(
-                    Instant.ofEpochMilli(sheetInfo.getModifiedTime().getValue()),
-                    ZoneId.of("Europe/Kiev"));
-        } else {
-            return null;
-        }
-
-    }
-    public void setSheetInfo(File sheetInfo) {
-        this.sheetInfo = sheetInfo;
     }
 
     public void setLeaderEmail(String leaderEmail) {
@@ -161,9 +120,7 @@ public class Group {
     public String getLeaderEmail() {
         return leaderEmail;
     }
-    public File getSheetInfo() {
-        return sheetInfo;
-    }
+
     public Integer getDeleteMessage() {
         return deleteMessage;
     }

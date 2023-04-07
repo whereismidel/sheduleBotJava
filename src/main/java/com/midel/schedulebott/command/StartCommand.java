@@ -1,5 +1,6 @@
 package com.midel.schedulebott.command;
 
+import com.midel.schedulebott.command.annotation.UserCommand;
 import com.midel.schedulebott.keyboard.inline.InlineKeyboardAnswer;
 import com.midel.schedulebott.student.Student;
 import com.midel.schedulebott.student.StudentController;
@@ -9,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 /**
  * Start {@link Command}.
  */
+@UserCommand
 public class StartCommand extends Command {
 
     public final static String START_MESSAGE = "Привіт, якщо ти староста - зареєструйся.";
@@ -28,7 +30,8 @@ public class StartCommand extends Command {
                     new Object[][]{
                             {InlineKeyboardAnswer.IM_LEADER},
                             {InlineKeyboardAnswer.IM_NOT_LEADER}
-                    });
+                    },
+                    null);
         } else {
             new MenuCommand(sendMessage).execute(update);
         }

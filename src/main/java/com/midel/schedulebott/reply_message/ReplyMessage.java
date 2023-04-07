@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
  */
 public abstract class ReplyMessage {
 
-        public SendMessage sendMessage;
+        public final SendMessage sendMessage;
         public ReplyMessage(SendMessage sendMessage){
                 this.sendMessage = sendMessage;
         }

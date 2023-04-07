@@ -8,11 +8,10 @@ WORKDIR /build
 
 # Copy pom and root src
 COPY pom.xml /build/pom.xml
-COPY src /build/src
+RUN mvn -e -B dependency:go-offline
 
-# Create jar file
-RUN mvn compile
-RUN mvn package -DskipTests && mv -v /build/target/*.jar /build/target/app.jar
+COPY src /build/src
+RUN mvn -e -B clean install package -DskipTests && mv -v /build/target/*.jar /build/target/app.jar
 
 #==============================
 # Final container

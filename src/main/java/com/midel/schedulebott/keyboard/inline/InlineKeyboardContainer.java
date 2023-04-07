@@ -11,6 +11,7 @@ public class InlineKeyboardContainer {
         private final ImmutableMap<String, InlineKeyboardHandler> answerMap;
 
         private final InlineKeyboardHandler deleteHandler;
+        private String callbackDataUserId;
 
         public InlineKeyboardContainer() {
 
@@ -26,15 +27,26 @@ public class InlineKeyboardContainer {
                     .put(InlineKeyboardAnswer.LEADER_MENU_OFF_SCHEDULE.getCallbackData(), new LeaderMenuSwitchScheduleInlineHandler(sendMessage))
                     .put(InlineKeyboardAnswer.LEADER_MENU_GROUP_INFO.getCallbackData(), new LeaderMenuGroupInfoInlineHandler(sendMessage))
                     .put(InlineKeyboardAnswer.LEADER_MENU_SCHEDULE_INFO.getCallbackData(), new LeaderMenuScheduleInfoInlineHandler(sendMessage))
+                    .put(InlineKeyboardAnswer.JOIN_TO_QUEUE.getCallbackData(), new QueueJoinInlineHandler(sendMessage))
+                    .put(InlineKeyboardAnswer.GO_DOWN_QUEUE.getCallbackData(), new QueueGoDownInlineHandler(sendMessage))
+                    .put(InlineKeyboardAnswer.LEAVE_FROM_QUEUE.getCallbackData(), new QueueLeaveInlineHandler(sendMessage))
+                    .put(InlineKeyboardAnswer.ARROW_NEXT_DAY.getCallbackData(), new ArrowPreviousCurrentNextDayInlineHandler(sendMessage, 1))
+                    .put(InlineKeyboardAnswer.ARROW_PREVIOUS_DAY.getCallbackData(), new ArrowPreviousCurrentNextDayInlineHandler(sendMessage, -1))
+                    .put(InlineKeyboardAnswer.ARROW_CURRENT_DAY.getCallbackData(), new ArrowPreviousCurrentNextDayInlineHandler(sendMessage, 0))
                     .build();
 
             deleteHandler = new DeleteMessageInlineHandler(sendMessage);
         }
 
         public InlineKeyboardHandler retrieveCommand(String callbackData) {
-            InlineKeyboardHandler answer = answerMap.get(callbackData);
+            String[] splitData = callbackData.split("#");
+
+            InlineKeyboardHandler answer = answerMap.get(splitData[0]);;
 
             if (answer != null){
+                if (splitData.length > 1)
+                    answer.setCallbackData(splitData[1]);
+
                 return answer;
             } else {
                 return deleteHandler;

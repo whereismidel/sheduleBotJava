@@ -22,9 +22,9 @@ import static com.midel.schedulebott.config.ChatConfig.sendSchedule;
 import static com.midel.schedulebott.config.ChatConfig.startWeekNumber;
 
 public class ScheduleController {
-    static String[] dayOfWeek = {"Неділя", "Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота"};
-    static String[] numberUnicode = {"\u0030\u20E3", "\u0031\u20E3", "\u0032\u20E3", "\u0033\u20E3", "\u0034\u20E3", "\u0035\u20E3", "\u0036\u20E3", "\u0037\u20E3", "\u0038\u20E3", "\u0039\u20E3"};
-    static final Logger logger = LoggerFactory.getLogger(ScheduleController.class);
+    public static final String[] dayOfWeek = {"Неділя", "Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота"};
+    public static final String[] numberUnicode = {"\u0030\u20E3", "\u0031\u20E3", "\u0032\u20E3", "\u0033\u20E3", "\u0034\u20E3", "\u0035\u20E3", "\u0036\u20E3", "\u0037\u20E3", "\u0038\u20E3", "\u0039\u20E3"};
+    private static final Logger logger = LoggerFactory.getLogger(ScheduleController.class);
 
     public static final ScheduleController.ScheduleTime[] notificationSchedule = {
             new ScheduleTime( 8, 0, ChatConfig.scheduleTime,1),
@@ -71,11 +71,11 @@ public class ScheduleController {
 
         int weekNumber = zdt.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
 
-        if (!sendSchedule || !group.getSettings().isState() || group.getSheetId() == null || weekNumber - startWeekNumber < 0){
+        if (!sendSchedule || !group.getSettings().isState() || group.getSheetId() == null || weekNumber - startWeekNumber < 0){ // ToDo змінити так, щоб якщо відправка розкладу вимкнена, через особисті всеодно можна було отримувати розклад
             throw new MissingMessageException("Missing message to start today. SendSchedule is false or group state is off");
         }
 
-        StringBuilder formatString = new StringBuilder("<strong>" + dayOfWeek[zdt.getDayOfWeek().getValue()] + ", " + zdt.format(DateTimeFormatter.ofPattern("dd.MM")) + " (" + (weekNumber - startWeekNumber) + " тиждень навчання) </strong>\n");
+        StringBuilder formatString = new StringBuilder("<strong>" + dayOfWeek[zdt.getDayOfWeek().getValue() % 7] + ", " + zdt.format(DateTimeFormatter.ofPattern("dd.MM")) + " (" + (weekNumber - startWeekNumber) + " тиждень навчання) </strong>\n");
 
         formatString
                 .append("\n<code>Розклад пар(")
@@ -83,6 +83,10 @@ public class ScheduleController {
                 .append(" тиждень):\n");
 
         ArrayList<Pair <String, String>> schedule;
+
+        if (zdt.getDayOfWeek().equals(DayOfWeek.SUNDAY)){
+            throw new MissingMessageException("There are no lessons on Sunday.");
+        }
 
         if (!zdt.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
             if (weekNumber % 2 != 0) {
@@ -96,7 +100,7 @@ public class ScheduleController {
                 throw new MissingMessageException("There are no lessons on Saturdays.");
             }
 
-            // 34 - 1 субота
+            // 1 субота+
             if (weekNumber - 33 < 0){
                 group.getSettings().setDailyNotification(false);
                 throw new MissingMessageException("Missing message to start today. If this is an error, fix it. Sunday is < 0");
@@ -142,15 +146,20 @@ public class ScheduleController {
                         ((!lessonForSecondGroup.equals("-") && lessonForFirstGroup.equals(lessonForSecondGroup)) || lessonForSecondGroup.equals(""))) {
                 formatString
                         .append(i).append(notificationSchedule[i-1]
-                                .timeForReal.format(DateTimeFormatter.ofPattern(". Початок - HH:mm\nІ/ІІ > ")))
-                        .append(group.getSchedule()
-                                .getSubjectByName(lessonForFirstGroup)
-                                .getName()).append("\n\n");
+                                .timeForReal.format(DateTimeFormatter.ofPattern(". HH:mm - ")))
+                        .append(notificationSchedule[i-1]
+                                .timeForReal.plusMinutes(ChatConfig.lessonDurabilityInMinute).format(DateTimeFormatter.ofPattern("HH:mm\n")));
+                formatString.append("І/ІІ > ").append(group.getSchedule()
+                                                    .getSubjectByName(lessonForFirstGroup)
+                                                    .getName()).append("\n\n");
             } else {
                 lessonForFirstGroup = lessonForFirstGroup.equals("-") ? "—" : group.getSchedule().getSubjectByName(lessonForFirstGroup).getName();
                 lessonForSecondGroup = lessonForSecondGroup.equals("-")  ? "—" : group.getSchedule().getSubjectByName(lessonForSecondGroup).getName();
 
-                formatString.append(i).append(notificationSchedule[i-1].timeForReal.format(DateTimeFormatter.ofPattern(". Початок - HH:mm\n")));
+                formatString.append(i).append(notificationSchedule[i-1]
+                                .timeForReal.format(DateTimeFormatter.ofPattern(". HH:mm - ")))
+                        .append(notificationSchedule[i-1]
+                                .timeForReal.plusMinutes(ChatConfig.lessonDurabilityInMinute).format(DateTimeFormatter.ofPattern("HH:mm\n")));
                 formatString.append("I   >  ").append(lessonForFirstGroup).append("\n");
                 formatString.append("II  >  ").append(lessonForSecondGroup).append("\n\n");
             }
@@ -198,6 +207,7 @@ public class ScheduleController {
                     }
 
                     // 34 - 1 субота
+                    // ToDo непрацює вже, якщо пари є в суботу це пофіксити тре
                     if (weekNumber-33 < 0 || weekNumber-33 > 13){
                         group.getSettings().setDailyNotification(false);
                         throw new MissingMessageException("");
@@ -231,6 +241,7 @@ public class ScheduleController {
                     formatString += numberUnicode[time.numberOfLesson] + " пара за розкладом.";
                     if (!(secondGroupSubject != null && secondGroupSubject.getName().equals("SAME"))){
                         formatString += "\nПочаток в <b><i>"+ time.timeForReal.format(DateTimeFormatter.ofPattern("HH:mm")) + "</i></b>";
+                        formatString += "\nКінець в <b><i>"+ time.timeForReal.plusMinutes(ChatConfig.lessonDurabilityInMinute).format(DateTimeFormatter.ofPattern("HH:mm")) + "</i></b>";
                         formatString += "\n\n<u>I підгрупа:</u>\n";
                         if (firstGroupSubject == null) {
                             formatString += "Пара відсутня.\n";
@@ -243,7 +254,7 @@ public class ScheduleController {
                                     group.getSchedule().getSubjectListTable()
                                             .stream()
                                             .filter(subject->subject.stream().anyMatch(cell-> cell.equals(firstGroupSubject.getName())))
-                                            .collect(Collectors.toList()).get(0).set(5, "");
+                                            .collect(Collectors.toList()).get(0).set(7, "");
 
                                     // update table Subject with new values
                                     try {
@@ -256,6 +267,13 @@ public class ScheduleController {
                                 }
 
                                 formatString += firstGroupSubject.getNoteForFirstGroupAndGeneralLesson().replace("PERMANENT", "").trim() + "\n";
+                            }
+
+                            if (firstGroupSubject.getLecturerForFirstGroupAndGeneralLesson() != null) {
+                                formatString += "<i>Викладач:</i> " + firstGroupSubject.getLecturerForFirstGroupAndGeneralLesson().trim() + "\n";
+                            }
+                            if (firstGroupSubject.getAuditoryForFirstGroupAndGeneralLesson() != null) {
+                                formatString += "<i>Аудиторія:</i> " + firstGroupSubject.getAuditoryForFirstGroupAndGeneralLesson().trim() + "\n";
                             }
 
                             firstButton.setUrl(firstGroupSubject.getLinkForFirstGroupAndGeneralLesson());
@@ -273,7 +291,7 @@ public class ScheduleController {
                                     group.getSchedule().getSubjectListTable()
                                             .stream()
                                             .filter(subject->subject.stream().anyMatch(cell-> cell.equals(secondGroupSubject.getName())))
-                                            .collect(Collectors.toList()).get(0).set(7, "");
+                                            .collect(Collectors.toList()).get(0).set(11, "");
 
                                     // update table Subject with new values
                                     try {
@@ -286,6 +304,13 @@ public class ScheduleController {
                                 }
 
                                 formatString += secondGroupSubject.getNoteForSecondGroup().replace("PERMANENT", "").trim() + "\n";
+                            }
+
+                            if (secondGroupSubject.getLecturerForSecondGroup() != null) {
+                                formatString += "<i>Викладач:</i> " + secondGroupSubject.getLecturerForSecondGroup().trim() + "\n";
+                            }
+                            if (secondGroupSubject.getAuditoryForSecondGroup() != null) {
+                                formatString += "<i>Аудиторія:</i> " + secondGroupSubject.getAuditoryForSecondGroup().trim() + "\n";
                             }
 
                             secondButton.setUrl(secondGroupSubject.getLinkForSecondGroup());
@@ -322,6 +347,7 @@ public class ScheduleController {
                     } else {
                         formatString += " <u>(спільна пара)</u>";
                         formatString += "\nПочаток в <b><i>"+ time.timeForReal.format(DateTimeFormatter.ofPattern("HH:mm")) + "</i></b>";
+                        formatString += "\nКінець в <b><i>"+ time.timeForReal.plusMinutes(ChatConfig.lessonDurabilityInMinute).format(DateTimeFormatter.ofPattern("HH:mm")) + "</i></b>";
                         formatString += "\n\n<b>" + firstGroupSubject.getName() + "</b>\n";
 
                         if (firstGroupSubject.getNoteForFirstGroupAndGeneralLesson() != null){
@@ -342,6 +368,13 @@ public class ScheduleController {
                             }
 
                             formatString += firstGroupSubject.getNoteForFirstGroupAndGeneralLesson().replace("PERMANENT", "").trim() + "\n";
+                        }
+
+                        if (firstGroupSubject.getLecturerForFirstGroupAndGeneralLesson() != null) {
+                            formatString += "<i>Викладач:</i> " + firstGroupSubject.getLecturerForFirstGroupAndGeneralLesson().trim() + "\n";
+                        }
+                        if (firstGroupSubject.getAuditoryForFirstGroupAndGeneralLesson() != null) {
+                            formatString += "<i>Аудиторія:</i> " + firstGroupSubject.getAuditoryForFirstGroupAndGeneralLesson().trim() + "\n";
                         }
 
                         if (currentSubject.getValue1()){
@@ -368,19 +401,18 @@ public class ScheduleController {
     }
 
     public static class ScheduleTime{
-        LocalTime timeNotification;
-
-        public LocalTime getTimeForReal() {
-            return timeForReal;
-        }
-
-        LocalTime timeForReal;
-        int numberOfLesson;
+        final LocalTime timeNotification;
+        final LocalTime timeForReal;
+        final int numberOfLesson;
 
         ScheduleTime(int hourForReal, int minuteForReal, int minutesAhead, int numberOfLesson){
             this.timeForReal = LocalTime.of(hourForReal, minuteForReal);
             this.timeNotification = timeForReal.minusMinutes(minutesAhead);
             this.numberOfLesson = numberOfLesson;
+        }
+
+        public LocalTime getTimeForReal() {
+            return timeForReal;
         }
     }
 

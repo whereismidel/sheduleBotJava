@@ -1,10 +1,12 @@
 package com.midel.schedulebott.command;
 
+import com.midel.schedulebott.command.annotation.UserCommand;
 import com.midel.schedulebott.student.Student;
 import com.midel.schedulebott.student.StudentController;
 import com.midel.schedulebott.telegram.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+@UserCommand
 public class MenuCommand extends Command {
 
     public static String MENU_MESSAGE = "\u2B07 <b>Головне меню</b> \u2B07";

@@ -17,12 +17,12 @@ import static com.midel.schedulebott.google.SheetAPI.readSheetForRange;
 import static com.midel.schedulebott.google.SheetAPI.updateValues;
 
 public class GroupRepo {
-    public static Map<String, Group> groups = new HashMap<>();
+    public static final Map<String, Group> groups = new HashMap<>();
     static final Logger logger = LoggerFactory.getLogger(GroupRepo.class);
 
     public static boolean importGroupList(){
         try {
-            List<List<Object>> valuesFromGroupList = readSheetForRange(DBConfig.groupAndStudentListSpreadsheet, DBConfig.groupsListRange);
+            List<List<Object>> valuesFromGroupList = readSheetForRange(DBConfig.adminPanelInfoSheet, DBConfig.groupsListRange);
 
             if (valuesFromGroupList == null || valuesFromGroupList.isEmpty()) {
                 logger.warn("No data found in \"Налаштування груп\"");
@@ -74,7 +74,7 @@ public class GroupRepo {
         }
         groupToExport.add(new ArrayList<>(Collections.nCopies((int)DBConfig.groupEdge - 64, "")));
 
-        if (updateValues(DBConfig.groupAndStudentListSpreadsheet, DBConfig.groupsListRange, groupToExport)){
+        if (updateValues(DBConfig.adminPanelInfoSheet, DBConfig.groupsListRange, groupToExport)){
             logger.info("Successful export of table \"Налаштування груп\"");
             return true;
         } else {
@@ -145,7 +145,7 @@ public class GroupRepo {
                 for (List<Object> subject : valuesFromGroupSchedule) {
                     // Normalizing the size of all rows to avoid IndexOutOfBoundsException
                     int size = subject.size();
-                    for (int i = 1; i <= 8 - size; i++) {
+                    for (int i = 1; i <= ((int)DBConfig.subjectEdge - 64) - size; i++) {
                         subject.add("");
                     }
 
@@ -159,9 +159,13 @@ public class GroupRepo {
 
                                 String.valueOf(subject.get(2)).trim().equals("") ? null : String.valueOf(subject.get(2)).trim(),
                                 String.valueOf(subject.get(3)).trim().equals("") ? null : String.valueOf(subject.get(3)).trim(),
+                                String.valueOf(subject.get(4)).trim().equals("") ? null : String.valueOf(subject.get(4)).trim(),
+                                String.valueOf(subject.get(5)).trim().equals("") ? null : String.valueOf(subject.get(5)).trim(),
 
                                 String.valueOf(subject.get(2)).trim().equals("") ? null : String.valueOf(subject.get(2)).trim(),
-                                String.valueOf(subject.get(3)).trim().equals("") ? null : String.valueOf(subject.get(3)).trim()
+                                String.valueOf(subject.get(3)).trim().equals("") ? null : String.valueOf(subject.get(3)).trim(),
+                                String.valueOf(subject.get(4)).trim().equals("") ? null : String.valueOf(subject.get(4)).trim(),
+                                String.valueOf(subject.get(5)).trim().equals("") ? null : String.valueOf(subject.get(5)).trim()
                         );
                     } else {
                         // Personal Subject for subgroups
@@ -169,11 +173,15 @@ public class GroupRepo {
                         subjectObj = new Subject(
                                 String.valueOf(subject.get(1)).trim().equals("") ? null : String.valueOf(subject.get(1)).trim(),
 
-                                String.valueOf(subject.get(4)).trim().equals("") ? null : String.valueOf(subject.get(4)).trim(),
-                                String.valueOf(subject.get(5)).trim().equals("") ? null : String.valueOf(subject.get(5)).trim(),
-
                                 String.valueOf(subject.get(6)).trim().equals("") ? null : String.valueOf(subject.get(6)).trim(),
-                                String.valueOf(subject.get(7)).trim().equals("") ? null : String.valueOf(subject.get(7)).trim()
+                                String.valueOf(subject.get(7)).trim().equals("") ? null : String.valueOf(subject.get(7)).trim(),
+                                String.valueOf(subject.get(8)).trim().equals("") ? null : String.valueOf(subject.get(8)).trim(),
+                                String.valueOf(subject.get(9)).trim().equals("") ? null : String.valueOf(subject.get(9)).trim(),
+
+                                String.valueOf(subject.get(10)).trim().equals("") ? null : String.valueOf(subject.get(10)).trim(),
+                                String.valueOf(subject.get(11)).trim().equals("") ? null : String.valueOf(subject.get(11)).trim(),
+                                String.valueOf(subject.get(12)).trim().equals("") ? null : String.valueOf(subject.get(12)).trim(),
+                                String.valueOf(subject.get(13)).trim().equals("") ? null : String.valueOf(subject.get(13)).trim()
                         );
                     }
 

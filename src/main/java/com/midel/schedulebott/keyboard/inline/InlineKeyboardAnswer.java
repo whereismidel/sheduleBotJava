@@ -14,7 +14,13 @@ public enum InlineKeyboardAnswer {
     GROUP_CHANGE_STUDENT_YES("Змінити групу","change_group_yes"),
     GROUP_CHANGE_STUDENT_NO("Залишитись в цій","change_group_no"),
     DELETE_ACCOUNT_YES("Так, видалити аккаунт", "delete_student_yes"),
-    DELETE_ACCOUNT_NO("Ні, не видаляти", "delete_student_no");
+    DELETE_ACCOUNT_NO("Ні, не видаляти", "delete_student_no"),
+    JOIN_TO_QUEUE("Стати в чергу", "join_to_queue"),
+    GO_DOWN_QUEUE("Пропустити одного вперед", "go_down_queue"),
+    LEAVE_FROM_QUEUE("Покинути чергу", "leave_from_queue"),
+    ARROW_NEXT_DAY("->", "next_day"),
+    ARROW_PREVIOUS_DAY("<-", "previous_day"),
+    ARROW_CURRENT_DAY("Сьогодні", "current_day");
 
 
 

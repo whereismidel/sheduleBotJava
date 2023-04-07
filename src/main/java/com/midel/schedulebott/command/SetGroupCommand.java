@@ -1,13 +1,15 @@
 package com.midel.schedulebott.command;
 
+import com.midel.schedulebott.command.annotation.GroupCommand;
+import com.midel.schedulebott.command.annotation.UserCommand;
 import com.midel.schedulebott.keyboard.inline.InlineKeyboardAnswer;
 import com.midel.schedulebott.student.Student;
 import com.midel.schedulebott.student.StudentController;
 import com.midel.schedulebott.telegram.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import static com.midel.schedulebott.command.CommandName.NO;
-
+@GroupCommand
+@UserCommand
 public class SetGroupCommand extends Command {
 
     public final static String INVALID_ARGUMENT_MESSAGE = "Невірно вказані аргументи або їх кількість. \n"
@@ -46,27 +48,34 @@ public class SetGroupCommand extends Command {
                 sendMessage.sendHTMLMessage(userId, INVALID_ARGUMENT_MESSAGE);
             } else {
                 Student student = StudentController.getStudentById(userId);
-                if (student != null && student.isLeader()){
-                    sendMessage.sendHTMLMessage(userId, String.format(LEADER_WARNING_MESSAGE, student.getGroup().getGroupName()));
+
+                if (student == null){
+                    sendMessage.sendHTMLMessage(userId, UNREGISTERED_WARNING_MESSAGE);
+
                 } else {
-                    if (student == null){
-                        sendMessage.sendHTMLMessage(userId, UNREGISTERED_WARNING_MESSAGE);
-                    } else {
-                        if (student.getGroup() != null){
-                            sendMessage.sendInlineKeyboard(userId,
-                                    String.format(STUDENT_CHANGE_WARNING_MESSAGE, student.getGroup().getGroupName()),
-                                    new Object[][]{
-                                        {InlineKeyboardAnswer.GROUP_CHANGE_STUDENT_YES},
-                                        {InlineKeyboardAnswer.GROUP_CHANGE_STUDENT_NO}
-                                    });
-                        } else {
-                            sendMessage.replyMessage(userId, SPECIFY_GROUP_MESSAGE);
-                        }
+                    if ((update.getMessage().isGroupMessage() || update.getMessage().isSuperGroupMessage()) && student.isLeader() == null){
+                        student.setLeader(false);
+                    } else if (student.isLeader()) {
+                        sendMessage.sendHTMLMessage(userId, String.format(LEADER_WARNING_MESSAGE, student.getGroup().getGroupName()));
+                        return;
                     }
+
+                    if (student.getGroup() != null){
+                        sendMessage.sendInlineKeyboard(userId,
+                                String.format(STUDENT_CHANGE_WARNING_MESSAGE, student.getGroup().getGroupName()),
+                                new Object[][]{
+                                    {InlineKeyboardAnswer.GROUP_CHANGE_STUDENT_YES},
+                                    {InlineKeyboardAnswer.GROUP_CHANGE_STUDENT_NO}
+                                },
+                                null);
+                    } else {
+                        sendMessage.replyMessage(userId, SPECIFY_GROUP_MESSAGE);
+                    }
+
                 }
             }
         } else {
-            sendMessage.sendHTMLMessage(userId, NO.getCommandName());
+            new NoCommand(sendMessage).execute(update);
         }
     }
 }

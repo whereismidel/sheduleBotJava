@@ -16,7 +16,7 @@ public class LeaderMenuReplyKeyboardCommand extends ReplyKeyboardCommand {
                                                 +"<i>Наприклад:</i>\n"
                                                 +"БІ-144Б\n"
                                                 +"СЗ-312Б(А)\n\n"
-                                                +"<b>Назва групи не повинна містити пробілів, а також будь-яких символів окрім: \'-\', \'(\', \')\'.</b>\n"
+                                                +"<b>Назва групи не повинна містити пробілів, а також будь-яких символів окрім: '-', '(', ')'.</b>\n"
                                                 +"<i>*Для відповіді відміть це повідомлення(якщо це не сталось автоматично)</i>";
 
     public static final String UNKNOWN_CHANNEL_MESSAGE = "Наступним кроком <u>тобі</u> необхідно створити <b>новий</b> канал.\n\n"
@@ -35,7 +35,7 @@ public class LeaderMenuReplyKeyboardCommand extends ReplyKeyboardCommand {
             "<i>Для відповіді відміть це повідомлення</i>";
 
     public static final String WAIT_MESSAGE = "Зачекай декілька секунд, йде процес створення..";
-    public static String LEADER_MENU_MESSAGE = "Твоя панель керування розкладом:";
+    public static final String LEADER_MENU_MESSAGE = "Твоя панель керування розкладом:";
 
     public LeaderMenuReplyKeyboardCommand(SendMessage sendMessage) {
         super(sendMessage);
@@ -90,7 +90,8 @@ public class LeaderMenuReplyKeyboardCommand extends ReplyKeyboardCommand {
                            // {InlineKeyboardAnswer.LEADER_MENU_CHANGE_LEADER} // ToDO
                             {InlineKeyboardAnswer.LEADER_MENU_GROUP_INFO},
                             {InlineKeyboardAnswer.LEADER_MENU_SCHEDULE_INFO}
-                    });
+                    },
+                    null);
 
         } else {
             new UnknownReplyKeyboardCommand(sendMessage).execute(update);

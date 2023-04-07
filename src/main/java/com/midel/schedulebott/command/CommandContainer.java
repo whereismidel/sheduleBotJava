@@ -3,7 +3,10 @@ package com.midel.schedulebott.command;
 
 import com.google.common.collect.ImmutableMap;
 import com.midel.schedulebott.command.annotation.AdminCommand;
+import com.midel.schedulebott.command.annotation.GroupCommand;
+import com.midel.schedulebott.command.annotation.UserCommand;
 import com.midel.schedulebott.telegram.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.List;
 
@@ -17,6 +20,7 @@ public class CommandContainer {
 
     private final ImmutableMap<String, Command> commandMap;
     private final Command unknownCommand;
+    private final Command ignoreCommand;
     private final List<String> admins;
 
     public CommandContainer(List<String> admins) {
@@ -44,29 +48,58 @@ public class CommandContainer {
                 .put(IMPORT_STUDENTS.getCommandName(), new ImportStudentsCommand(sendMessage))
                 .put(IMPORT_GROUPS.getCommandName(), new ImportGroupsCommand(sendMessage))
                 .put(FLOOD.getCommandName(), new FloodCommand(sendMessage))
+                .put(IGNORE_COMMAND.getCommandName(), new IgnoreCommand(sendMessage))
+                .put(CREATE_QUEUE.getCommandName(), new CreateQueueCommand(sendMessage))
+                .put(ADD_TO_QUEUE.getCommandName(), new AddToQueueCommand(sendMessage))
+                .put(REMOVE_FROM_QUEUE.getCommandName(), new RemoveFromQueueCommand(sendMessage))
                 .build();
 
         unknownCommand = new UnknownCommand(sendMessage);
+        ignoreCommand = new IgnoreCommand(sendMessage);
     }
 
-    public Command retrieveCommand(String commandIdentifier, List<String> arguments, String userId) {
+    public Command retrieveCommand(String commandIdentifier, List<String> arguments, Update update) {
         Command orDefault = commandMap.getOrDefault(commandIdentifier, unknownCommand);
 
         if (orDefault != null) {
             orDefault.arguments = arguments;
 
             if (isAdminCommand(orDefault)) {
-                if (admins.contains(userId)) {
+                if (admins.contains(update.getMessage().getFrom().getId().toString())) {
+                    return orDefault;
+                } else {
+                    return unknownCommand;
+                }
+            }
+
+            if (isGroupCommand(orDefault)) {
+                if (isUserCommand(orDefault) || update.getMessage().isGroupMessage() || update.getMessage().isSuperGroupMessage()){
+                    return orDefault;
+                } else {
+                    return unknownCommand;
+                }
+            }
+
+            if (isUserCommand(orDefault)) {
+                if (!update.getMessage().isGroupMessage() && !update.getMessage().isSuperGroupMessage() && !update.getMessage().isChannelMessage()){
                     return orDefault;
                 } else {
                     return unknownCommand;
                 }
             }
         }
-        return orDefault;
+        return ignoreCommand;
     }
 
     private boolean isAdminCommand(Command command) {
         return nonNull(command.getClass().getAnnotation(AdminCommand.class));
+    }
+
+    private boolean isGroupCommand(Command command) {
+        return nonNull(command.getClass().getAnnotation(GroupCommand.class));
+    }
+
+    private boolean isUserCommand(Command command) {
+        return nonNull(command.getClass().getAnnotation(UserCommand.class));
     }
 }

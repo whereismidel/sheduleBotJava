@@ -9,7 +9,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public abstract class InlineKeyboardHandler {
 
 
-    public SendMessage sendMessage;
+    public final SendMessage sendMessage;
+    protected String callbackData;
     public InlineKeyboardHandler(SendMessage sendMessage){
         this.sendMessage = sendMessage;
     }
@@ -20,4 +21,8 @@ public abstract class InlineKeyboardHandler {
      * @param update provided {@link Update} object with all the needed data for command.
      */
     public abstract void execute(Update update);
+
+    public void setCallbackData(String callbackData) {
+        this.callbackData = callbackData;
+    }
 }

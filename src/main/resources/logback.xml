@@ -23,7 +23,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.midel" level="info" additivity="false">
+    <logger name="com.midel" level="debug" additivity="false">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </logger>
