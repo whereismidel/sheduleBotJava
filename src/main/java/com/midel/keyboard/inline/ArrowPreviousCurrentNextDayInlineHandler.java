@@ -35,10 +35,10 @@ public class ArrowPreviousCurrentNextDayInlineHandler extends InlineKeyboardHand
         }
 
         int messageId = message.getMessageId();
-        String[] splitData = callbackData.replace("//", "/").split("/");
+        String[] splitData = callbackData.split("/");
         String userOwner = splitData[0];
-        String groupOwner = splitData[1];
-        Long second = Long.parseLong(splitData[2]);
+        String groupOwner = splitData[1].replace("=", "#");
+        long second = Long.parseLong(splitData[2]);
 
         ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(second), ZoneId.of("Europe/Kiev")).plusDays(dayPosition);
         if (dayPosition == 0){
@@ -52,7 +52,7 @@ public class ArrowPreviousCurrentNextDayInlineHandler extends InlineKeyboardHand
 
         if (update.getCallbackQuery().getFrom().getId().toString().equals(userOwner)) {
 
-            Group group = GroupController.getGroupByName(groupOwner.replace(" ", "/"));
+            Group group = GroupController.getGroupByName(groupOwner);
 
             if (group != null) {
                 try {

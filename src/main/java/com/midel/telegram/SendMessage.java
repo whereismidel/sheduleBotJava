@@ -236,6 +236,10 @@ public class SendMessage {
     public boolean deleteMessage(String chatId, int messageId) {
         DeleteMessage deleteMessage = new DeleteMessage(chatId, messageId);
 
+        if (messageId == -1) {
+            return false;
+        }
+
         try {
             return scheduleBot.execute(deleteMessage); // Видалення
         } catch (TelegramApiRequestException re){

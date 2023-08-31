@@ -1,6 +1,7 @@
 package com.midel.command;
 
 import com.midel.command.annotation.UserCommand;
+import com.midel.keyboard.inline.CreateStudentInlineHandler;
 import com.midel.keyboard.inline.InlineKeyboardAnswer;
 import com.midel.student.Student;
 import com.midel.student.StudentController;
@@ -24,16 +25,21 @@ public class StartCommand extends Command {
         String userId = update.getMessage().getChatId().toString();
         Student student = StudentController.getStudentById(userId);
 
-        if (student == null || student.isLeader() == null){
-            sendMessage.sendInlineKeyboard(userId,
-                    START_MESSAGE,
-                    new Object[][]{
-                            {InlineKeyboardAnswer.IM_LEADER},
-                            {InlineKeyboardAnswer.IM_NOT_LEADER}
-                    },
-                    null);
+
+        if (arguments != null && arguments.size() == 1) {
+            new CreateStudentInlineHandler(sendMessage).execute(update, arguments.get(0), userId);
         } else {
-            new MenuCommand(sendMessage).execute(update);
+            if (student == null || student.isLeader() == null) {
+                sendMessage.sendInlineKeyboard(userId,
+                        START_MESSAGE,
+                        new Object[][]{
+                                {InlineKeyboardAnswer.IM_LEADER},
+                                {InlineKeyboardAnswer.IM_NOT_LEADER}
+                        },
+                        null);
+            } else {
+                new MenuCommand(sendMessage).execute(update);
+            }
         }
     }
 }

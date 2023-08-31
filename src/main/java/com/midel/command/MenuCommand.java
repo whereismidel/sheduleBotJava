@@ -1,6 +1,7 @@
 package com.midel.command;
 
 import com.midel.command.annotation.UserCommand;
+import com.midel.keyboard.inline.ChooseFacultyAndGroupHandler;
 import com.midel.student.Student;
 import com.midel.student.StudentController;
 import com.midel.telegram.SendMessage;
@@ -25,17 +26,18 @@ public class MenuCommand extends Command {
     public void execute(Update update) {
         String userId = update.getMessage().getChatId().toString();
 
-        execute(update, userId);
-    }
-
-    public void execute(Update update, String userId) {
+        update.getMessage().getChat().setId(Long.parseLong(userId));
         Student student = StudentController.getStudentById(userId);
 
         if (student != null){
             if (student.isLeader()){
-                sendMessage.sendClientKeyboard(userId,
-                        MENU_MESSAGE,
-                        new String[][]{{"\uD83D\uDD25Доступні команди\uD83D\uDD25"}, {"\uD83D\uDD25Меню старости\uD83D\uDD25"}}, false);
+                if (student.getGroup() != null) {
+                    sendMessage.sendClientKeyboard(userId,
+                            MENU_MESSAGE,
+                            new String[][]{{"\uD83D\uDD25Доступні команди\uD83D\uDD25"}, {"\uD83D\uDD25Меню старости\uD83D\uDD25"}}, false);
+                } else {
+                    new ChooseFacultyAndGroupHandler(sendMessage).execute(update, "faculty", userId);
+                }
             } else {
                 sendMessage.sendClientKeyboard(userId,
                         MENU_MESSAGE,
@@ -45,4 +47,8 @@ public class MenuCommand extends Command {
             new StartCommand(sendMessage).execute(update);
         }
     }
+
+//    public void execute(Update update, String userId) {
+//
+//    }
 }

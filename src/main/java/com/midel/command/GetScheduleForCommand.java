@@ -46,7 +46,7 @@ public class GetScheduleForCommand extends Command{
                         String formatMsg = ScheduleController.getMessageForStartOfNewDay(group, currentZonedDate, false, false);
                         sendMessage.sendHTMLMessage(userId, formatMsg);
                     } catch (MissingMessageException e) {
-                        System.out.println(e);
+//                        System.out.println(e);
                     }
                 }else {
                     sendMessage.sendHTMLMessage(userId, INVALID_ARGUMENT_MESSAGE);

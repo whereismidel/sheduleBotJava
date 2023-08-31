@@ -1,5 +1,6 @@
 package com.midel.command;
 
+import com.midel.command.annotation.DisabledCommand;
 import com.midel.command.annotation.GroupCommand;
 import com.midel.command.annotation.UserCommand;
 import com.midel.keyboard.inline.InlineKeyboardAnswer;
@@ -10,6 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 @GroupCommand
 @UserCommand
+@DisabledCommand
 public class SetGroupCommand extends Command {
 
     public final static String INVALID_ARGUMENT_MESSAGE = "Невірно вказані аргументи або їх кількість. \n"
@@ -24,7 +26,7 @@ public class SetGroupCommand extends Command {
     public final static String STUDENT_CHANGE_WARNING_MESSAGE = "Ти <b><u>студент</u></b> групи <b>%s</b>.\n\n"
             + "Чи бажаєш ти змінити свою групу?";
 
-    public final static String UNREGISTERED_WARNING_MESSAGE = "Ти ще не зареєструвався.\n"
+    public final static String UNREGISTERED_WARNING_MESSAGE = "Ти ще не зареєструвався(-лась).\n"
             + "Для реєстрації використай команду <b>/start</b>";
 
     public static final String SPECIFY_GROUP_MESSAGE = "<b>Вкажіть групу</b>\n"

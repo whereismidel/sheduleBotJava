@@ -3,6 +3,7 @@ package com.midel.command;
 
 import com.google.common.collect.ImmutableMap;
 import com.midel.command.annotation.AdminCommand;
+import com.midel.command.annotation.DisabledCommand;
 import com.midel.command.annotation.GroupCommand;
 import com.midel.command.annotation.UserCommand;
 import com.midel.telegram.SendMessage;
@@ -63,6 +64,10 @@ public class CommandContainer {
         if (orDefault != null) {
             orDefault.arguments = arguments;
 
+            if (isDisabledCommand(orDefault)) {
+                return unknownCommand;
+            }
+
             if (isAdminCommand(orDefault)) {
                 if (admins.contains(update.getMessage().getFrom().getId().toString())) {
                     return orDefault;
@@ -90,15 +95,19 @@ public class CommandContainer {
         return ignoreCommand;
     }
 
-    private boolean isAdminCommand(Command command) {
+    private static boolean isAdminCommand(Command command) {
         return nonNull(command.getClass().getAnnotation(AdminCommand.class));
     }
 
-    private boolean isGroupCommand(Command command) {
+    private static boolean isGroupCommand(Command command) {
         return nonNull(command.getClass().getAnnotation(GroupCommand.class));
     }
 
-    private boolean isUserCommand(Command command) {
+    private static boolean isUserCommand(Command command) {
         return nonNull(command.getClass().getAnnotation(UserCommand.class));
+    }
+
+    static boolean isDisabledCommand(Command command) {
+        return nonNull(command.getClass().getAnnotation(DisabledCommand.class));
     }
 }

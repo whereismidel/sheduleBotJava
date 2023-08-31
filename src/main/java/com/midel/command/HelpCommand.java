@@ -17,21 +17,19 @@ import static com.midel.command.CommandName.*;
 public class HelpCommand extends Command {
 
     public static final String PRIVATE_HELP_MESSAGE = String.format("✨*Доступні команди*✨\n\n"
-                    + "%s \\- повернутись в головне меню\\. \n"
-                    + "%s \\- допомога по командам\\. \n"
-                    + "`%s` \\- отримати розклад на конкретний день\\. \n"
-                    + "%s \\- встановити/змінити групу\\. \n"
-                    + "%s \\- видалити аккаунт\\. \n",
-            MENU.getCommandName(), HELP.getCommandName(), GET_SCHEDULE_USER.getCommandName(),
-            SET_GROUP.getCommandName(), RECREATE_STUDENT.getCommandName());
+                    + MENU.getCommandName() + " \\- повернутись в головне меню\\. \n"
+                    + HELP.getCommandName() + " \\- допомога по командам\\. \n"
+                    + (CommandContainer.isDisabledCommand(new GetScheduleUserCommand(null))? "" : GET_SCHEDULE_USER.getCommandName() + " \\- отримати розклад на конкретний день\\. \n")
+                    + (CommandContainer.isDisabledCommand(new SetGroupCommand(null))? "" : SET_GROUP.getCommandName() + " \\- встановити/змінити групу\\. \n")
+                    + (CommandContainer.isDisabledCommand(new RestartCommand(null))? "" : RECREATE_STUDENT.getCommandName() + " \\- видалити аккаунт\\. \n")
+    );
 
     public static final String GROUP_HELP_MESSAGE = String.format("✨<b>Доступні команди</b>✨\n\n"
-                    + "%s@" + BotConfig.BOT_USERNAME + " - допомога по командам. \n"
-                    + "<code>%s@" + BotConfig.BOT_USERNAME + "</code> - отримати розклад на конкретний день. \n"
-                    + "%s@" + BotConfig.BOT_USERNAME + " - встановити/змінити групу. \n"
-                    + "%s@" + BotConfig.BOT_USERNAME + " - створити чергу. \n",
-            HELP.getCommandName(), GET_SCHEDULE_USER.getCommandName(),
-            SET_GROUP.getCommandName(), CREATE_QUEUE.getCommandName());
+                    + HELP.getCommandName() + "@" + BotConfig.BOT_USERNAME + " - допомога по командам. \n"
+                    + (CommandContainer.isDisabledCommand(new GetScheduleUserCommand(null))? "" : "<code>" + GET_SCHEDULE_USER.getCommandName() +"@" + BotConfig.BOT_USERNAME + "</code> - отримати розклад на конкретний день. \n")
+                    + (CommandContainer.isDisabledCommand(new SetGroupCommand(null))? "" : SET_GROUP.getCommandName() + "@" + BotConfig.BOT_USERNAME + " - встановити/змінити групу. \n")
+                    + (CommandContainer.isDisabledCommand(new CreateQueueCommand(null))? "" : CREATE_QUEUE.getCommandName() + "@" + BotConfig.BOT_USERNAME + " - створити чергу. \n")
+    );
 
     public HelpCommand(SendMessage sendMessage){
         super(sendMessage);

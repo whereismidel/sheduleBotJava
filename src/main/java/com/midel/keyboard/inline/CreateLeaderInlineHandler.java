@@ -20,8 +20,8 @@ public class CreateLeaderInlineHandler extends InlineKeyboardHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(CreateLeaderInlineHandler.class);
 
-    public static final String ADVICE_MESSAGE = "<b>Вітаю, ти зареєструвався як староста.</b>";
-    public static final String WARNING_MESSAGE = "Ти вже зареєструвався як староста.\n" +
+    public static final String ADVICE_MESSAGE = "<b>Вітаю, ти зареєструвався(-лась) як староста.</b>";
+    public static final String WARNING_MESSAGE = "Ти вже зареєструвався(-лась) як староста.\n" +
                                                     "/restart для повторної реєстрації";
 
     public static final String ERROR_MESSAGE = "Під час реєстрації сталась помилка, спробуй ще раз <pre>/restart</pre> або звернись до " + ChatConfig.creatorUsername;
@@ -49,7 +49,9 @@ public class CreateLeaderInlineHandler extends InlineKeyboardHandler {
                 student.setLeader(true);
                 successLeaderRegistration = StudentRepo.exportStudentList();
             } else {
-                sendMessage.sendHTMLMessage(userId, WARNING_MESSAGE);
+                if (student.isLeader()) {
+                    sendMessage.sendHTMLMessage(userId, WARNING_MESSAGE);
+                }
                 return;
             }
         }

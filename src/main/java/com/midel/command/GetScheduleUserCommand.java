@@ -20,8 +20,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
-import static com.midel.command.CommandName.NO;
-
 
 /**
  * GetScheduleUser {@link Command}.
@@ -40,19 +38,23 @@ public class GetScheduleUserCommand extends Command{
             "\n<pre>В цей день пари не проводяться або закінчився навчальний процес.</pre>";
 
     public final static String INFO_MESSAGE = "Для того, щоб отримати розклад на конкретний день введіть\\:\n"
-            +"`/sch` `назва групи` `день\\.місяць`\n"
-            + "*Приклад\\:*\n"
-            + "`/sch БІ\\-244Б 27\\.08`\n"
-            + "`/sch БІ\\-244Б\\(А\\) 01\\.10`\n\n"
-            + "Якщо ти встановив групу в налаштуваннях, то тобі доступний синтаксис\\:\n"
+//            +"`/sch` `назва групи` `день\\.місяць`\n"
+//            + "*Приклад\\:*\n"
+//            + "`/sch БІ\\-244Б 27\\.08`\n"
+//            + "`/sch БІ\\-244Б\\(А\\) 01\\.10`\n\n"
+//            + "Якщо ти встановив групу в налаштуваннях, то тобі доступний синтаксис\\:\n"
             + "`/sch` `день\\.місяць`";
 
-    public final static String GROUP_NOT_SET_MESSAGE = "<b>Вкажіть групу</b>\n"
-            +"Для початку вкажи групу, в якій навчаєшся:\n"
-            +"<i>Наприклад:</i>\n"
-            +"БІ-144Б\n"
-            +"СЗ-312Б(А)\n\n"
-            +"<i>*Для відповіді відміть це повідомлення(якщо це не сталось автоматично)</i>";
+//    public final static String GROUP_NOT_SET_MESSAGE = "<b>Потрібна прив'язка до групи.</b>\n"
+//            +"Для початку вкажи групу, в якій навчаєшся:\n"
+//            +"<i>Наприклад:</i>\n"
+//            +"БІ-144Б\n"
+//            +"СЗ-312Б(А)\n\n"
+//            +"<i>*Для відповіді відміть це повідомлення(якщо це не сталось автоматично)</i>";
+
+    public static final String GROUP_NOT_SET_MESSAGE = "<b>Група не вказана</b>\n" +
+            "Для того щоб користуватись ботом і переглядати розклад своєї групи запитай у старости код для приєднання, або у відповідь до цього повідомлення надішли ідентифікатор групи.";
+
 
     public final static String STUDENT_NOT_REGISTERED_MESSAGE = "<b>Ти ще не зареєстрований</b>\n"
             +"Введи команду /start\n\n"
@@ -66,7 +68,7 @@ public class GetScheduleUserCommand extends Command{
     public void execute(Update update) {
         String userId = update.getMessage().getChatId().toString();
 
-        if (arguments != null) {
+        if (arguments != null && arguments.size() <= 1) {
             ZonedDateTime zdt = ZonedDateTime.now();
             Group group;
             switch (arguments.size()){
@@ -122,7 +124,7 @@ public class GetScheduleUserCommand extends Command{
                                     new Object[][]{
                                             {InlineKeyboardAnswer.ARROW_PREVIOUS_DAY, InlineKeyboardAnswer.ARROW_CURRENT_DAY, InlineKeyboardAnswer.ARROW_NEXT_DAY}
                                     },
-                                    update.getMessage().getFrom().getId() + "/" + group.getGroupName().replace("/", "//") + "/" + zdt.toEpochSecond());
+                                    update.getMessage().getFrom().getId() + "/" + group.getGroupName().replace("#", "=") + "/" + zdt.toEpochSecond());
                         } else {
                             String formatMsg = ScheduleController.getMessageForStartOfNewDay(group, zdt, false, false);
                             sendMessage.sendInlineKeyboard(userId,
@@ -130,7 +132,7 @@ public class GetScheduleUserCommand extends Command{
                                     new Object[][]{
                                             {InlineKeyboardAnswer.ARROW_PREVIOUS_DAY, InlineKeyboardAnswer.ARROW_CURRENT_DAY, InlineKeyboardAnswer.ARROW_NEXT_DAY}
                                     },
-                                    update.getMessage().getFrom().getId() + "/" + group.getGroupName().replace("/","//") + "/" + zdt.toEpochSecond());
+                                    update.getMessage().getFrom().getId() + "/" + group.getGroupName().replace("#", "=") + "/" + zdt.toEpochSecond());
                         }
 
                     } catch (MissingMessageException mm) {
@@ -139,7 +141,7 @@ public class GetScheduleUserCommand extends Command{
                                 new Object[][]{
                                         {InlineKeyboardAnswer.ARROW_PREVIOUS_DAY, InlineKeyboardAnswer.ARROW_CURRENT_DAY, InlineKeyboardAnswer.ARROW_NEXT_DAY}
                                 },
-                                update.getMessage().getFrom().getId() + "/" + group.getGroupName().replace("/","//") + "/" + zdt.toEpochSecond());
+                                update.getMessage().getFrom().getId() + "/" + group.getGroupName().replace("#", "=") + "/" + zdt.toEpochSecond());
                     } catch (Exception e) {
                         sendMessage.sendMarkupV2Message(userId, INVALID_ARGUMENT_MESSAGE);
                     }
@@ -152,7 +154,7 @@ public class GetScheduleUserCommand extends Command{
             }
 
         } else {
-            sendMessage.sendHTMLMessage(userId, NO.getCommandName());
+            new NoCommand(sendMessage).execute(update);
         }
     }
 }

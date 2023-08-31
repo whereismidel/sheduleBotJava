@@ -223,10 +223,10 @@ public class GroupRepo {
                         group.getSchedule().getSubjectListWithLink().put(subjectName, new com.midel.type.Pair<>(subjectInfo.getLinkForFirstGroupAndGeneralLesson(), subjectInfo.getLinkForSecondGroup()));
                     }
                 }
-                //System.out.println(group.getSchedule().getSubjectListWithLink());
+//                System.out.println(group.getSchedule().getSubjectListWithLink());
 
                 logger.info("Successful importing of the table \"ПРЕДМЕТИ\". groupName = {}, sheetID = {}", group.getGroupName(), group.getSheetId());
-                System.out.println(group.getSchedule().getSubjectInfo());
+//                System.out.println(group.getSchedule().getSubjectInfo());
                 Pair<Boolean, ArrayList<String>> validate = GroupTablesValidator.scheduleInfoSheetValidator(group);
 
                 if (!validate.getValue0() && (group.getSettings().isState() || group.getSettings().isValid())) {

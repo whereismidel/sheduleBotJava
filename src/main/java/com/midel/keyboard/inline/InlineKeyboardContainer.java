@@ -11,7 +11,6 @@ public class InlineKeyboardContainer {
         private final ImmutableMap<String, InlineKeyboardHandler> answerMap;
 
         private final InlineKeyboardHandler deleteHandler;
-        private String callbackDataUserId;
 
         public InlineKeyboardContainer() {
 
@@ -33,6 +32,7 @@ public class InlineKeyboardContainer {
                     .put(InlineKeyboardAnswer.ARROW_NEXT_DAY.getCallbackData(), new ArrowPreviousCurrentNextDayInlineHandler(sendMessage, 1))
                     .put(InlineKeyboardAnswer.ARROW_PREVIOUS_DAY.getCallbackData(), new ArrowPreviousCurrentNextDayInlineHandler(sendMessage, -1))
                     .put(InlineKeyboardAnswer.ARROW_CURRENT_DAY.getCallbackData(), new ArrowPreviousCurrentNextDayInlineHandler(sendMessage, 0))
+                    .put(InlineKeyboardAnswer.CHOOSE_FACULTY_AND_GROUP.getCallbackData(), new ChooseFacultyAndGroupHandler(sendMessage))
                     .build();
 
             deleteHandler = new DeleteMessageInlineHandler(sendMessage);
@@ -41,7 +41,7 @@ public class InlineKeyboardContainer {
         public InlineKeyboardHandler retrieveCommand(String callbackData) {
             String[] splitData = callbackData.split("#");
 
-            InlineKeyboardHandler answer = answerMap.get(splitData[0]);;
+            InlineKeyboardHandler answer = answerMap.get(splitData[0]);
 
             if (answer != null){
                 if (splitData.length > 1)

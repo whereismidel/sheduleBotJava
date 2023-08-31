@@ -10,7 +10,8 @@ public enum ReplyMessageKey {
     CREATE_AND_SHARE_SHEET("Залишилась пошта"),
     UNKNOWN_REPLY(""),
     DELETE_STUDENT("Видалення користувача"),
-    DELETE_LEADER("Видалення аккаунту");
+    DELETE_LEADER("Видалення аккаунту"),
+    CREATE_STUDENT("Група не вказана");
 
     private final String keyMessage;
 

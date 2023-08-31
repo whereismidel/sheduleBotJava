@@ -10,11 +10,9 @@ import com.midel.student.Student;
 import com.midel.student.StudentController;
 import com.midel.student.StudentRepo;
 import com.midel.telegram.SendMessage;
-import com.midel.template.TemplateRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
 
@@ -27,10 +25,6 @@ public class CreateAndSetGroupNameReplyMessage extends ReplyMessage {
     public static final String GROUP_NOT_FOUND_MESSAGE = "<b>Вкажіть групу</b>\n"
             +"Групи з такою назвою не існує.\n"
             +"Можливо ти помилився при введені або твій староста ще не створив її.";
-
-    public static final String GROUP_NOT_CORRECT_MESSAGE = "<b>Вкажіть групу</b>\n"
-            +"Назва групи не повинна містити пробілів, а також будь-яких символів окрім: '-', '(', ')'.\n"
-            +"Обмеження на довжину назви - 10 символів";
     public static final String GROUP_ALREADY_EXIST_MESSAGE = "Група з такою назвою вже існує.\n"
             +"Якщо сталась помилка, і саме ти староста цієї групи звернись до " + ChatConfig.creatorUsername;
     public static final String ALREADY_HAVE_GROUP_MESSAGE = "За тобою вже закріплена група.\n"
@@ -61,23 +55,6 @@ public class CreateAndSetGroupNameReplyMessage extends ReplyMessage {
 
                     if (GroupController.getGroupByName(groupName) == null) {
                         if (GroupController.getGroupByLeader(userId) == null) {
-
-                            if (groupName.length() > 10 || !groupName.matches("^[A-ZА-ЯІЇЄ\\-()0-9]*$")){
-                                sendMessage.sendInlineKeyboard(
-                                        userId,
-                                        "Вкажіть групу",
-                                        TemplateRepo.templates.keySet().stream()
-                                                .map(e -> {
-                                                    InlineKeyboardButton button = new InlineKeyboardButton(e);
-                                                    button.setCallbackData(e);
-                                                    return new Object[]{button};
-                                                })
-                                                .toArray(Object[][]::new),
-                                        null
-                                );
-                                sendMessage.replyMessage(userId, GROUP_NOT_CORRECT_MESSAGE);
-                                return;
-                            }
 
                             group = new Group(groupName, userId, null, null, null, false, ChatConfig.startSemester, null);
                             if (GroupRepo.addGroupToList(group)) {

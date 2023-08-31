@@ -115,6 +115,7 @@ public class ScheduleBotChannel extends TelegramLongPollingBot {
                 commandContainer
                         .retrieveCommand(CommandName.NO.getCommandName(), null, update)
                         .execute(update);
+                commandContainer.retrieveCommand(CommandName.START.getCommandName(), null, update).execute(update);
                 logger.error("Command execution error {}", text, e);
             }
         }

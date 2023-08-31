@@ -22,7 +22,7 @@ public class TemplateController {
                     groupWithFaculty.put(faculty, templateSet);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             }
         }
 

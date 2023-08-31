@@ -20,7 +20,8 @@ public enum InlineKeyboardAnswer {
     LEAVE_FROM_QUEUE("Покинути чергу", "leave_from_queue"),
     ARROW_NEXT_DAY(">", "next_day"),
     ARROW_PREVIOUS_DAY("<", "previous_day"),
-    ARROW_CURRENT_DAY("Сьогодні", "current_day");
+    ARROW_CURRENT_DAY("Сьогодні", "current_day"),
+    CHOOSE_FACULTY_AND_GROUP("Факультет/Група", "choose_faculty_and_group");
 
 
 

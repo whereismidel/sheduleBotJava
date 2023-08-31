@@ -40,7 +40,7 @@ public class ScheduledTask {
                 GroupRepo.exportGroupList();
 
             } catch (MissingMessageException ignore){
-                System.out.println(ignore);
+//                System.out.println(ignore);
             } catch (Exception e) {
                 logger.warn("Failed to send schedule for tomorrow. {}", group);
             }

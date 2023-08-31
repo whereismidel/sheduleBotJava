@@ -9,6 +9,8 @@ import com.midel.group.GroupController;
 import com.midel.group.GroupRepo;
 import com.midel.keyboard.reply.LeaderMenuReplyKeyboardCommand;
 import com.midel.telegram.SendMessage;
+import com.midel.template.Template;
+import com.midel.template.TemplateRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -34,11 +36,12 @@ public class CreateSheetAndShareEmailReplyMessage extends ReplyMessage {
             +"Ти завжди можеш почати все спочатку <pre>/restart</pre>\n"
             +"Або звернутись до " + ChatConfig.creatorUsername;
 
-    public static final String SUCCESSFUL_MESSAGE = "Чудово, твоя особиста таблиця створена.\n\n"
-            +"Ось посилання(доступ з %s): <a href=\"%s\"><b>ТИЦЬ</b></a>\n\n"
-            +"Заповни таблюці згідно з інструкцій, які вказані в самій таблиці.\n"
+    public static final String SUCCESSFUL_MESSAGE = "Чудово, твоя особиста таблиця створена і повинна бути заповнена.\n"
+            +"Якщо таблиця порожня, заповнена не тим розкладом, або не проходить валідацію(якщо ти нічого не змінював) - дай зворотній зв'язок " + ChatConfig.creatorUsername + "\n\n"
+            +"Ось посилання(доступ з %s): <a href=\"%s\"><b>натискай</b></a>\n\n"
+            +"Ти можеш змінювати таблиці згідно з інструкціями, які вказані поряд.\n"
             +"Обов'язково дотримуйся правил заповнення, "
-            +"<a href=\"https://docs.google.com/spreadsheets/d/1t4lSypq-8c07Y_96sSI40emyvjgkFbUSK528-1YZp-k\">для прикладу можеш використати ось цю таблицю</a>\n"
+            +"<a href=\"https://docs.google.com/spreadsheets/d/1t4lSypq-8c07Y_96sSI40emyvjgkFbUSK528-1YZp-k\">для прикладу можеш використати ось цю таблицю</a>.\n\n"
             +"Для <b>активації</b> розкладу в \"Меню старости\" потрібно <b>ввімкнути відправку розкладу</b>.\n\n"
             +"Також тобі відкрився повний доступ до \"Меню старости\". Ознайомся з ним";
 
@@ -54,7 +57,10 @@ public class CreateSheetAndShareEmailReplyMessage extends ReplyMessage {
 
         Group group = GroupController.getGroupByLeader(userId);
 
+
         if (group != null && (group.getSheetId() == null || group.getSheetId().equals(""))){
+
+            Template template = TemplateRepo.templates.get(group.getGroupName().split("#")[0]);
 
             Pattern pattern = Pattern.compile("^[a-z0-9](\\.?[a-z0-9]){5,}@stud\\.nau\\.edu\\.ua$");
             Matcher matcher = pattern.matcher(emailFromUserText);
@@ -68,7 +74,7 @@ public class CreateSheetAndShareEmailReplyMessage extends ReplyMessage {
                         String sheetId = SheetAPI.createSpreadsheetFromTemplateAndSharePermission(
                                 group.getGroupName(),
                                 new String[]{DBConfig.mainAccount, emailFromUserText},
-                                DBConfig.templateSheet
+                                template == null? DBConfig.templateSheet : template.getSheetId()
                         );
                         if (sheetId == null) {
                             throw new Exception();

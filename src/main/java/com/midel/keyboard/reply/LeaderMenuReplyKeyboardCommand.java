@@ -4,6 +4,7 @@ import com.midel.command.StartCommand;
 import com.midel.config.BotConfig;
 import com.midel.group.Group;
 import com.midel.group.GroupController;
+import com.midel.keyboard.inline.ChooseFacultyAndGroupHandler;
 import com.midel.keyboard.inline.InlineKeyboardAnswer;
 import com.midel.student.Student;
 import com.midel.student.StudentController;
@@ -12,13 +13,14 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 public class LeaderMenuReplyKeyboardCommand extends ReplyKeyboardCommand {
 
-    public static final String UNKNOWN_GROUP_MESSAGE = "<b>Вкажіть групу</b>\n"
-                                                +"Для початку напиши групу, в якій виконуєш обов'язки старости:\n"
-                                                +"<i>Наприклад:</i>\n"
-                                                +"БІ-144Б\n"
-                                                +"СЗ-312Б(А)\n\n"
-                                                +"<b>Назва групи не повинна містити пробілів, а також будь-яких символів окрім: '-', '(', ')'.</b>\n"
-                                                +"<i>*Для відповіді відміть це повідомлення(якщо це не сталось автоматично)</i>";
+//    public static final String UNKNOWN_GROUP_MESSAGE = "<b>Вкажіть групу</b>\n"
+//                                                +"Для початку напиши групу, в якій виконуєш обов'язки старости:\n"
+//                                                +"<i>Наприклад:</i>\n"
+//                                                +"БІ-144Б\n"
+//                                                +"СЗ-312Б(А)\n\n"
+//                                                +"<b>Назва групи не повинна містити пробілів, а також будь-яких символів окрім: '-', '(', ')'.</b>\n"
+//                                                +"<i>*Для відповіді відміть це повідомлення(якщо це не сталось автоматично)</i>";
+//    public static final String UNKNOWN_GROUP_MESSAGE = "<b>Обери свій факультет:</b>";
 
 //    public static final String UNKNOWN_CHANNEL_MESSAGE = "Наступним кроком <u>тобі</u> необхідно створити <b>новий</b> канал.\n\n"
 //            +"... -> Новий канал -> Назва: %s Розклад-> Приватний канал\n\n"
@@ -57,31 +59,27 @@ public class LeaderMenuReplyKeyboardCommand extends ReplyKeyboardCommand {
     @Override
     public void execute(Update update) {
         String userId = update.getMessage().getChatId().toString();
+//
+//        execute(update, userId);
 
-        execute(update, userId);
-    }
-
-    public void execute(Update update, String userId) {
         Student student = StudentController.getStudentById(userId);
         Group group;
         try {
             if (student != null && student.isLeader()) {
                 if (student.getGroup() == null) {
-
-                    sendMessage.replyMessage(userId, UNKNOWN_GROUP_MESSAGE);
-
+                    new ChooseFacultyAndGroupHandler(sendMessage).execute(update, "faculty", userId);
                     return;
                 } else {
                     group = GroupController.getGroupByLeader(userId);
                     if (group == null) {
-                        sendMessage.replyMessage(userId, UNKNOWN_GROUP_MESSAGE);
+                        new ChooseFacultyAndGroupHandler(sendMessage).execute(update, "faculty", userId);
                         return;
                     }
                 }
 
                 if (group.getChannelId() == null) {
                     sendMessage.sendHTMLMessage(userId,
-                            String.format(UNKNOWN_CHANNEL_MESSAGE, BotConfig.BOT_USERNAME, group.getGroupName(), BotConfig.BOT_USERNAME));
+                            String.format(UNKNOWN_CHANNEL_MESSAGE, BotConfig.BOT_USERNAME, group.getGroupName().split("#")[0], BotConfig.BOT_USERNAME));
                     return;
                 }
                 if (group.getSheetId() == null) {
@@ -115,4 +113,8 @@ public class LeaderMenuReplyKeyboardCommand extends ReplyKeyboardCommand {
             new StartCommand(sendMessage).execute(update);
         }
     }
+
+//    public void execute(Update update, String userId) {
+//
+//    }
 }

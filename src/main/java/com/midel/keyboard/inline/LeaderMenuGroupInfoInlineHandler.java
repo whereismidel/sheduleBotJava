@@ -1,6 +1,7 @@
 package com.midel.keyboard.inline;
 
 import com.midel.command.MenuCommand;
+import com.midel.config.BotConfig;
 import com.midel.group.Group;
 import com.midel.student.Student;
 import com.midel.student.StudentController;
@@ -9,10 +10,11 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 public class LeaderMenuGroupInfoInlineHandler extends InlineKeyboardHandler {
-    private static final String INFO_MESSAGE = "Назва групи: <b>%s</b>\n"
+    private static final String INFO_MESSAGE = "Ідентифікатор групи: <code>%s</code>\n"
             +"Статус відправки розкладу: <b>%s</b>\n"
             +"Статус підключеного каналу: <b>%s</b>\n"
-            +"Особиста таблиця(доступ з %s): <a href=\"https://docs.google.com/spreadsheets/d/%s\"><b>ТИЦЬ</b></a>\n";
+            +"Особиста таблиця(доступ з %s): <a href=\"https://docs.google.com/spreadsheets/d/%s\"><b>натискай</b></a>\n\n"
+            +"Щоб студенти могли користуватись ботом в особистих повідомлення поділись ось цим посиланням: <code>t.me/%s?start=%s</code>\n";
 
     private static final String ERROR_MESSAGE = "Не вдалось отримати актуальну інформацію про групу. Спробуй пізніше.";
 
@@ -40,7 +42,8 @@ public class LeaderMenuGroupInfoInlineHandler extends InlineKeyboardHandler {
                                 group.getGroupName(),
                                 group.getSettings().isState()?"Активно":"Вимкнено",
                                 group.getChannelId()!=null?"Підключено":"Не підключено",
-                                group.getLeaderEmail(), group.getSheetId()
+                                group.getLeaderEmail(), group.getSheetId(),
+                                BotConfig.BOT_USERNAME, group.getLeaderId()
                         )
                 );
 

@@ -45,7 +45,7 @@ public class AddToQueueCommand extends Command {
                 }
             }
         } catch (Exception e){
-            e.printStackTrace();
+//            e.printStackTrace();
             sendMessage.sendHTMLMessage(from.getId().toString(), INFO_MESSAGE);
         }
     }
