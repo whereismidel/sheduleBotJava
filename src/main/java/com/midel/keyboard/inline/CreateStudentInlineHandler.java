@@ -24,7 +24,7 @@ public class CreateStudentInlineHandler extends InlineKeyboardHandler {
     public static final String ADVICE_MESSAGE = "<b>Вітаю, ти зареєструвався(-лась) як студент групи <u>%s</u>.</b>\n\n"
             +"Для перегляду доступних команд обери в меню пункт <u>\"Доступні команди\"</u>.\n";
 
-    public static final String WARNING_MESSAGE = "Ти вже зареєструвався(-лась) як староста.\n" +
+    public static final String WARNING_MESSAGE = "Ти вже зареєструвався(-лась) як студент.\n" +
             "/restart для повторної реєстрації";
 
     public static final String NEED_GROUP_LINK_MESSAGE = "<b>Група не вказана</b>\n" +
@@ -53,9 +53,11 @@ public class CreateStudentInlineHandler extends InlineKeyboardHandler {
                 sendMessage.replyMessage(userId, NEED_GROUP_LINK_MESSAGE);
             }
             return;
+        } else {
+
         }
 
-        Group group = GroupController.getGroupByName(callbackData);
+        Group group = GroupController.getGroupByLeader(callbackData);
 
         if (group != null && username != null){
 

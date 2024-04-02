@@ -25,7 +25,6 @@ public class StartCommand extends Command {
         String userId = update.getMessage().getChatId().toString();
         Student student = StudentController.getStudentById(userId);
 
-
         if (arguments != null && arguments.size() == 1) {
             new CreateStudentInlineHandler(sendMessage).execute(update, arguments.get(0), userId);
         } else {

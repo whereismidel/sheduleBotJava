@@ -57,7 +57,7 @@ public class FullScheduleNotifyMessage {
 
     public String getMessage() throws MissingMessageException {
 
-        if (dateTime.getDayOfWeek().equals(DayOfWeek.SATURDAY) || dateTime.getDayOfWeek().equals(DayOfWeek.SUNDAY)){
+        if ((dateTime.getDayOfWeek().equals(DayOfWeek.SATURDAY) && !ChatConfig.isSaturdayLesson) || dateTime.getDayOfWeek().equals(DayOfWeek.SUNDAY)){
             throw new MissingMessageException("No lessons on weekends.");
         }
 

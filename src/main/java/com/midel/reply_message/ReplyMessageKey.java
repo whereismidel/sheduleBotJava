@@ -6,7 +6,7 @@ package com.midel.reply_message;
 public enum ReplyMessageKey {
 
     SET_GROUP("Вкажіть групу"),
-    CREATE_CHANNEL("Створено канал/групу"),
+    CREATE_CHANNEL("Створено канал"),
     CREATE_AND_SHARE_SHEET("Залишилась пошта"),
     UNKNOWN_REPLY(""),
     DELETE_STUDENT("Видалення користувача"),

@@ -1,5 +1,6 @@
 package com.midel.group;
 
+import com.midel.config.ChatConfig;
 import com.midel.exceptions.TooManyDaysException;
 
 import java.time.DayOfWeek;
@@ -9,7 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Week {
-    private static final int maxDays = 5;
+    private static final int maxDays = ChatConfig.isSaturdayLesson?6:5;
     private List<Day> days;
     private boolean isInvalid = false;
 

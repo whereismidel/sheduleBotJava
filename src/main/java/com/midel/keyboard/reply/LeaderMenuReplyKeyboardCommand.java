@@ -4,7 +4,7 @@ import com.midel.command.StartCommand;
 import com.midel.config.BotConfig;
 import com.midel.group.Group;
 import com.midel.group.GroupController;
-import com.midel.keyboard.inline.ChooseFacultyAndGroupHandler;
+import com.midel.keyboard.inline.ChooseFacultyAndGroupInlineHandler;
 import com.midel.keyboard.inline.InlineKeyboardAnswer;
 import com.midel.student.Student;
 import com.midel.student.StudentController;
@@ -67,12 +67,12 @@ public class LeaderMenuReplyKeyboardCommand extends ReplyKeyboardCommand {
         try {
             if (student != null && student.isLeader()) {
                 if (student.getGroup() == null) {
-                    new ChooseFacultyAndGroupHandler(sendMessage).execute(update, "faculty", userId);
+                    new ChooseFacultyAndGroupInlineHandler(sendMessage).execute(update, "faculty", userId);
                     return;
                 } else {
                     group = GroupController.getGroupByLeader(userId);
                     if (group == null) {
-                        new ChooseFacultyAndGroupHandler(sendMessage).execute(update, "faculty", userId);
+                        new ChooseFacultyAndGroupInlineHandler(sendMessage).execute(update, "faculty", userId);
                         return;
                     }
                 }

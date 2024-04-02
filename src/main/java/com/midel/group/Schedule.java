@@ -29,16 +29,14 @@ public class Schedule {
 
     public String getLinkForSubgroup(String subjectName, SubGroup subGroup){
         Tuple<String> links = subjectListWithLink.get(subjectName);
+
         if (links == null)
                 return null;
 
         if (links instanceof Common){
             return ((Common<String>) links).get();
         } else {
-            if (subGroup.equals(SubGroup.COMMON))
-                return ((Pair<String>) links).get(SubGroup.FIRST_GROUP.getValue());
-            else
-                return ((Pair<String>) links).get(subGroup.getValue());
+            return ((Pair<String>) links).get(subGroup.getValue()-1);
         }
     }
 

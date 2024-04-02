@@ -40,6 +40,7 @@ public class CreateSheetAndShareEmailReplyMessage extends ReplyMessage {
             +"Якщо таблиця порожня, заповнена не тим розкладом, або не проходить валідацію(якщо ти нічого не змінював) - дай зворотній зв'язок " + ChatConfig.creatorUsername + "\n\n"
             +"Ось посилання(доступ з %s): <a href=\"%s\"><b>натискай</b></a>\n\n"
             +"Ти можеш змінювати таблиці згідно з інструкціями, які вказані поряд.\n"
+            +"<b>ПІСЛЯ ЗМІН В ТАБЛИЦІ ПОТРІБНО НАТИСНУТИ КНОПКУ \"Перевірка коректності таблиць\"</b>\n\n"
             +"Обов'язково дотримуйся правил заповнення, "
             +"<a href=\"https://docs.google.com/spreadsheets/d/1t4lSypq-8c07Y_96sSI40emyvjgkFbUSK528-1YZp-k\">для прикладу можеш використати ось цю таблицю</a>.\n\n"
             +"Для <b>активації</b> розкладу в \"Меню старости\" потрібно <b>ввімкнути відправку розкладу</b>.\n\n"
@@ -58,7 +59,7 @@ public class CreateSheetAndShareEmailReplyMessage extends ReplyMessage {
         Group group = GroupController.getGroupByLeader(userId);
 
 
-        if (group != null && (group.getSheetId() == null || group.getSheetId().equals(""))){
+        if (group != null && (group.getSheetId() == null || group.getSheetId().isEmpty())){
 
             Template template = TemplateRepo.templates.get(group.getGroupName().split("#")[0]);
 

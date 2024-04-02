@@ -54,7 +54,7 @@ public class CreateChannelReplyMessage extends ReplyMessage {
                     return;
                 }
                 case LEFT: {
-                    if (group != null && group.getChannelId() != null) {
+                    if (group.getChannelId() != null) {
                         try {
                             sendMessage.sendHTMLMessage(userId, KICKED_MESSAGE);
 
@@ -79,7 +79,7 @@ public class CreateChannelReplyMessage extends ReplyMessage {
                 }
             }
 
-            if (group != null && group.getChannelId() == null) {
+            if (group.getChannelId() == null) {
                 try {
 
                     group.setChannelId(memberUpdated.getChat().getId().toString());

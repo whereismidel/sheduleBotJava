@@ -1,5 +1,6 @@
 package com.midel.schedule;
 
+import com.midel.config.ChatConfig;
 import com.midel.exceptions.MissingMessageException;
 import com.midel.group.Group;
 import com.midel.group.SubGroup;
@@ -36,7 +37,7 @@ public class LessonNotifyMessage {
 
 
     private static final String titlePart = "%s пара за розкладом. %s\n\n"; // "Номер пари" пара за розкладом. "чи спільна"
-    private static final String timeBorderPart = "\u23F3 Триватиме з <b><i>%s</i></b> по <b><i>%s</i></b>\n\n";
+    private static final String timeBorderPart = "⏳ Триватиме з <b><i>%s</i></b> по <b><i>%s</i></b>\n\n";
 
     private static final String[] lastLessonPart = new String[]{
             "Це була остання пара на сьогодні, більше не турбую \uD83D\uDE22",
@@ -101,7 +102,7 @@ public class LessonNotifyMessage {
     }
 
     public String getMessage() throws MissingMessageException {
-        if (dateTime.getDayOfWeek() == DayOfWeek.SATURDAY
+        if ((dateTime.getDayOfWeek() == DayOfWeek.SATURDAY && !ChatConfig.isSaturdayLesson)
                 || dateTime.getDayOfWeek() == DayOfWeek.SUNDAY){
             // ToDo внести сюди зміни якщо є заняття по вихідним
             throw new MissingMessageException("Сьогодні вихідний.");
@@ -160,7 +161,7 @@ public class LessonNotifyMessage {
 
                 String note = "";
                 if (subject.getNote() != null){
-                    note = subject.removeNoteIfNotPermanent(subject.getNote(), isGlobalMessage, group, isCommonLesson ?SubGroup.COMMON:subgroupPairMessage.size() == 0?SubGroup.FIRST_GROUP:SubGroup.SECOND_GROUP);
+                    note = subject.removeNoteIfNotPermanent(subject.getNote(), isGlobalMessage, group, isCommonLesson ?SubGroup.COMMON: subgroupPairMessage.isEmpty() ?SubGroup.FIRST_GROUP:SubGroup.SECOND_GROUP);
                     if (!subject.getNote().isPermanent()) {
                         subject.setNote(null);
                     }
@@ -168,10 +169,10 @@ public class LessonNotifyMessage {
 //                    note = subject.getNotes().stream()
 //                            .map(n -> subject.removeNoteIfNotPermanent(n, isGlobalMessage, group, isCommonLesson ?SubGroup.COMMON:subgroupPairMessage.size() == 0?SubGroup.FIRST_GROUP:SubGroup.SECOND_GROUP))
 //                            .collect(Collectors.joining(""));
-                    note = "\u26A1 " + note + "\n";
+                    note = "⚡ " + note + "\n";
                 }
 
-                String lector = !showLecture || subject.getLector() == null ? "" : "\u2708 " + subject.getLector() + "\n";
+                String lector = !showLecture || subject.getLector() == null ? "" : "✈ " + subject.getLector() + "\n";
                 String auditory = !showAuditory || subject.getAuditory() == null ? "" : "\uD83C\uDFE2 " + subject.getAuditory() + "\n";
                 subgroupPairMessage.add(
                         String.format(

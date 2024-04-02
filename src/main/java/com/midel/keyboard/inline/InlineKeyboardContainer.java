@@ -32,7 +32,7 @@ public class InlineKeyboardContainer {
                     .put(InlineKeyboardAnswer.ARROW_NEXT_DAY.getCallbackData(), new ArrowPreviousCurrentNextDayInlineHandler(sendMessage, 1))
                     .put(InlineKeyboardAnswer.ARROW_PREVIOUS_DAY.getCallbackData(), new ArrowPreviousCurrentNextDayInlineHandler(sendMessage, -1))
                     .put(InlineKeyboardAnswer.ARROW_CURRENT_DAY.getCallbackData(), new ArrowPreviousCurrentNextDayInlineHandler(sendMessage, 0))
-                    .put(InlineKeyboardAnswer.CHOOSE_FACULTY_AND_GROUP.getCallbackData(), new ChooseFacultyAndGroupHandler(sendMessage))
+                    .put(InlineKeyboardAnswer.CHOOSE_FACULTY_AND_GROUP.getCallbackData(), new ChooseFacultyAndGroupInlineHandler(sendMessage))
                     .build();
 
             deleteHandler = new DeleteMessageInlineHandler(sendMessage);

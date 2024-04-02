@@ -97,6 +97,7 @@ public class QueueController {
     public static LinkedHashMap<Integer, Pair<String, String>> textToUserQueue(String stringQueue) {
         LinkedHashMap<Integer, Pair<String, String>> queue = new LinkedHashMap<>();
 
+
         String[] users = stringQueue.split(" / ");
         for(String user : users){
             int num = Integer.parseInt(user.substring(0, user.indexOf(".")));

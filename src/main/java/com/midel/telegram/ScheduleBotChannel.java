@@ -7,6 +7,7 @@ import com.midel.config.ChatConfig;
 import com.midel.keyboard.inline.InlineKeyboardContainer;
 import com.midel.keyboard.reply.ReplyKeyboardContainer;
 import com.midel.reply_message.ReplyMessageContainer;
+import com.midel.reply_message.ReplyMessageKey;
 import com.midel.student.StudentController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,13 +54,14 @@ public class ScheduleBotChannel extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         logger.trace("{}", update);
+  //      System.out.println(update);
 
         if (update.hasCallbackQuery()){
             inlineKeyboardContainer
                     .retrieveCommand(update.getCallbackQuery().getData())
                     .execute(update);
         } else if (update.hasMyChatMember()){
-            replyMessageContainer.retrieveCommand("Створено канал/групу").execute(update);
+            replyMessageContainer.retrieveCommand(ReplyMessageKey.CREATE_CHANNEL.getKeyMessage()).execute(update);
         }
 
         if (update.hasMessage() && update.getMessage().hasText()) {

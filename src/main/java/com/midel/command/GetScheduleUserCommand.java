@@ -95,7 +95,7 @@ public class GetScheduleUserCommand extends Command{
                     String[] date;
                     int day, month;
 
-                    group = GroupController.getGroupByName(arguments.get(0));
+                    group = GroupController.getGroupByName(arguments.get(0).replace("/", " "));
                     try {
                         if (group == null){
                             sendMessage.sendHTMLMessage(userId, GROUP_NOT_FOUND_MESSAGE);

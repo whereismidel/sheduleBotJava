@@ -27,11 +27,11 @@ public class  GetLessonCommand extends Command{
 
     @Override
     public void execute(Update update) {
-//        String userId = update.getMessage().getChat().getId().toString();
-        String userId = "-1001833464949";
+        String userId = update.getMessage().getChat().getId().toString();
+        //String userId = "-1001833464949";
 
         if (arguments != null) {
-            if (arguments.size() == 0) {
+            if (arguments.isEmpty()) {
                     sendMessage.sendMarkupV2Message(userId, INFO_MESSAGE);
             } else if (arguments.size() != 4 || !debug){
                 sendMessage.sendHTMLMessage(userId, INVALID_ARGUMENT_MESSAGE);
@@ -39,25 +39,24 @@ public class  GetLessonCommand extends Command{
                 ChatConfig.debugArray = new ArrayList<>();
                 ChatConfig.debugArray.add(GET_LESSON);
 
-                ChatConfig.debugArray.add(arguments.get(0).toUpperCase()); // назва групи
-                for(int i = 1; i <= 2; i++)
-                    for (int j = 1; j <= 7; j++)
-                        for (int k = 1; k <= 6; k++) {
-                            ChatConfig.debugArray = new ArrayList<>();
-                            ChatConfig.debugArray.add(GET_LESSON);
-                            ChatConfig.debugArray.add("БІ-344Б"); // назва групи
-                            ChatConfig.debugArray.add(i+""); // номер тижня(1/2)
-                            ChatConfig.debugArray.add(j+""); // день тижня(число)
-                            ChatConfig.debugArray.add(k+""); // номер пари
-
-                            new ScheduledTask().checkAvailabilityOfLessonsEveryDay();
-                        }
-//                ChatConfig.debugArray.add(arguments.get(0).toUpperCase()); // назва групи
-//                ChatConfig.debugArray.add(arguments.get(1).toLowerCase()); // номер тижня(1/2)
-//                ChatConfig.debugArray.add(arguments.get(2).toLowerCase()); // день тижня(число)
-//                ChatConfig.debugArray.add(arguments.get(3)); // номер пари
+//                for(int i = 1; i <= 2; i++)
+//                    for (int j = 1; j <= 7; j++)
+//                        for (int k = 1; k <= 6; k++) {
+//                            ChatConfig.debugArray = new ArrayList<>();
+//                            ChatConfig.debugArray.add(GET_LESSON);
+//                            ChatConfig.debugArray.add("ФКПІ 444#787943933"); // назва групи
+//                            ChatConfig.debugArray.add(i+""); // номер тижня(1/2)
+//                            ChatConfig.debugArray.add(j+""); // день тижня(число)
+//                            ChatConfig.debugArray.add(k+""); // номер пари
 //
-//                new ScheduledTask().checkAvailabilityOfLessonsEveryDay();
+//                            new ScheduledTask().checkAvailabilityOfLessonsEveryDay();
+//                        }
+                ChatConfig.debugArray.add(arguments.get(0).toUpperCase().replace("/", " ")); // назва групи
+                ChatConfig.debugArray.add(arguments.get(1).toLowerCase()); // номер тижня(1/2)
+                ChatConfig.debugArray.add(arguments.get(2).toLowerCase()); // день тижня(число)
+                ChatConfig.debugArray.add(arguments.get(3)); // номер пари
+
+                new ScheduledTask().checkAvailabilityOfLessonsEveryDay();
             }
         } else {
             sendMessage.sendHTMLMessage(userId, NO.getCommandName());

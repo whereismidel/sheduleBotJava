@@ -28,14 +28,14 @@ public class ChatConfig {
 
 
     // Рік навчання
-    public static final int year = 2023;
+    public static final int year = 2024;
     // Дата початку семестру
-    public static final LocalDateTime startSemester = LocalDateTime.of(year,9,1,0,0);
+    public static final LocalDateTime startSemester = LocalDateTime.of(year,1,22,0,0, 1, 1);
     // Дата кінця семестру
-    public static final LocalDateTime endSemester = LocalDateTime.of(year,12,22,23,59);
+    public static final LocalDateTime endSemester = LocalDateTime.of(year,6,30,23,59, 59, 1);
     public static final int lessonDurabilityInMinute = 95;
     // Номер тижня від початку року, з якого почався семестр
     public static final long startWeekNumber =  WEEKS.between(LocalDateTime.of(year,1,1,0,0), startSemester);
     // Чи потрібні пари по суботам
-    public static final boolean isSaturdayLesson = false;
+    public static final boolean isSaturdayLesson = true;
 }

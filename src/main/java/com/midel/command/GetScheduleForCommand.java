@@ -34,12 +34,12 @@ public class GetScheduleForCommand extends Command{
 
 
         if (arguments != null) {
-            if (arguments.size() == 0) {
+            if (arguments.isEmpty()) {
                     sendMessage.sendMarkupV2Message(userId, INFO_MESSAGE);
             } else if (arguments.size() != 2 || !debug){
                 sendMessage.sendHTMLMessage(userId, INVALID_ARGUMENT_MESSAGE);
             } else{
-                Group group = GroupController.getGroupByName(arguments.get(0));
+                Group group = GroupController.getGroupByName(arguments.get(0).replace("_", " "));
                 if (group != null) {
                     ZonedDateTime currentZonedDate = ZonedDateTime.now(ZoneId.of("Europe/Kiev")).plusDays(Integer.parseInt(arguments.get(1)));
                     try {

@@ -57,6 +57,7 @@ public class ArrowPreviousCurrentNextDayInlineHandler extends InlineKeyboardHand
             if (group != null) {
                 try {
                     String formatMsg = ScheduleController.getMessageForStartOfNewDay(group, zonedDateTime, false, false);
+
                     if (!sendMessage.editMessage(chatId, messageId,
                             formatMsg,
                             SendMessage.getInlineKeyboardMarkup(new Object[][]{

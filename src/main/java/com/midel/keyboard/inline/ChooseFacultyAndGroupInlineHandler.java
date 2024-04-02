@@ -24,19 +24,20 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ChooseFacultyAndGroupHandler extends InlineKeyboardHandler{
+public class ChooseFacultyAndGroupInlineHandler extends InlineKeyboardHandler{
 
-    private static final Logger logger = LoggerFactory.getLogger(ChooseFacultyAndGroupHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(ChooseFacultyAndGroupInlineHandler.class);
 
     public static final String SPECIFY_FACULTY_MESSAGE = "<b>Обери свій факультет:</b>";
     public static final String SPECIFY_YEAR_MESSAGE = "<b>Вкажи курс зі списку:</b>";
     public static final String SPECIFY_GROUP_MESSAGE = "<b>Вкажи групу зі списку:</b>";
 
     public static final String TEMPLATE_NOT_FOUND_MESSAGE = "<b>На жаль розкладу для цього розділу ще не додано..</b>\n\n" +
-            "Але! Ти можеш це виправити, надішли у відповідь на це повідомлення <b>PDF</b> файл з розкладом, який вам надали куратори.\n" +
-            "І згодом його буде додано. <b>Я тобі повідомлю</b>, коли це станеться - головне не закривай повідомлення для мене.";
+            "Можливість надсилання розкладу на додавання з'явиться згодом.";
+//            "Але! Ти можеш це виправити, надішли у відповідь на це повідомлення <b>PDF</b> файл з розкладом, який вам надали куратори.\n" +
+//            "І згодом його буде додано. <b>Я тобі повідомлю</b>, коли це станеться - головне не закривай повідомлення для мене.";
 
-    public ChooseFacultyAndGroupHandler(SendMessage sendMessage) {
+    public ChooseFacultyAndGroupInlineHandler(SendMessage sendMessage) {
         super(sendMessage);
     }
 
@@ -63,7 +64,7 @@ public class ChooseFacultyAndGroupHandler extends InlineKeyboardHandler{
                 faculty = split[1];
             }
             case 1:{
-                stage = split[0]; // not_listed, faculty, year, group, create
+                stage = split[0]; // back, not_listed, faculty, year, group, create
                 break;
             }
             default: {
@@ -106,7 +107,8 @@ public class ChooseFacultyAndGroupHandler extends InlineKeyboardHandler{
                                 {new Pair<>("2 курс", "choose_faculty_and_group#group/" + faculty + "/2")},
                                 {new Pair<>("3 курс", "choose_faculty_and_group#group/" + faculty + "/3")},
                                 {new Pair<>("4 курс", "choose_faculty_and_group#group/" + faculty + "/4")},
-                                {new Pair<>("Немає в списку", "choose_faculty_and_group#not_listed")}
+                                {new Pair<>("Немає в списку", "choose_faculty_and_group#not_listed")},
+                                {new Pair<>("Пернутись назад", "choose_faculty_and_group#back-faculty")}
                         },
                         null
                 );
@@ -129,17 +131,14 @@ public class ChooseFacultyAndGroupHandler extends InlineKeyboardHandler{
                                 .collect(Collectors.toList());
 
                         groupList.add(new Object[]{new Pair<>("Немає в списку", "choose_faculty_and_group#not_listed")});
+                        groupList.add(new Object[]{new Pair<>("Пернутись назад", "choose_faculty_and_group#back-year/" + faculty)});
 
-                        if (groupList.size() < 2){
-                            sendMessage.replyMessage(userId, TEMPLATE_NOT_FOUND_MESSAGE);
-                        } else {
-                            sendMessage.sendInlineKeyboard(
-                                    userId,
-                                    SPECIFY_GROUP_MESSAGE,
-                                    groupList.toArray(new Object[0][]),
-                                    null
-                            );
-                        }
+                        sendMessage.sendInlineKeyboard(
+                                userId,
+                                SPECIFY_GROUP_MESSAGE,
+                                groupList.toArray(new Object[0][]),
+                                null
+                        );
                     } else {
                         sendMessage.replyMessage(userId, TEMPLATE_NOT_FOUND_MESSAGE);
                     }
@@ -159,6 +158,16 @@ public class ChooseFacultyAndGroupHandler extends InlineKeyboardHandler{
             }
             case "not_listed": {
                 sendMessage.replyMessage(userId, TEMPLATE_NOT_FOUND_MESSAGE);
+                break;
+            }
+            case "back-year": {
+                callbackData = "year/" + faculty;
+                execute(update);
+                break;
+            }
+            case "back-faculty": {
+                callbackData = "faculty";
+                execute(update);
                 break;
             }
 

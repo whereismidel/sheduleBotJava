@@ -27,11 +27,15 @@ public class QueueRepo {
                 queues.clear();
             } else {
                 for (List<Object> rowQueue : valuesFromQueues) {
+                    if (rowQueue.get(0).toString().isEmpty()){
+                        continue;
+                    }
+
                     Queue queue = new Queue(
                             rowQueue.get(0).toString().equals("null") ? null : rowQueue.get(0).toString(),
                             rowQueue.get(1).toString().equals("null") ? null : rowQueue.get(1).toString(),
                             rowQueue.get(2).toString().equals("null") ? null : rowQueue.get(2).toString(),
-                            rowQueue.get(3).toString().equals("null") ? new LinkedHashMap<>() : QueueController.textToUserQueue(rowQueue.get(3).toString()),
+                            rowQueue.get(3).toString().equals("null") || rowQueue.get(3).toString().isEmpty() ? new LinkedHashMap<>() : QueueController.textToUserQueue(rowQueue.get(3).toString()),
                             rowQueue.get(4).toString().equals("null") ? null : rowQueue.get(4).toString().equals("active")
                     );
 

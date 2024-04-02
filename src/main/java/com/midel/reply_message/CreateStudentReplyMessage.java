@@ -14,13 +14,13 @@ public class CreateStudentReplyMessage extends ReplyMessage {
     @Override
     public void execute(Update update) {
         String userId = update.getMessage().getChatId().toString();
-        String groupIdFromMessage = update.getMessage().getText();
+        String leaderIdFromMessage = update.getMessage().getText();
         int messageId = update.getMessage().getReplyToMessage().getMessageId();
 
         Student student = StudentController.getStudentById(userId);
 
         if (student == null || student.getGroup() == null) {
-            new CreateStudentInlineHandler(sendMessage).execute(update, groupIdFromMessage, userId);
+            new CreateStudentInlineHandler(sendMessage).execute(update, leaderIdFromMessage, userId);
         }
 
         sendMessage.deleteMessage(userId, messageId);

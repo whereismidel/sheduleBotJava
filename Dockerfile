@@ -1,30 +1,34 @@
-#=============================
-# Build container
-#=============================
-FROM maven AS builder
+FROM maven:3.8.4-openjdk-8 AS build
 
-# Set working directory to /src
-WORKDIR /build
-
-# Copy pom and root src
-COPY pom.xml /build/pom.xml
-RUN mvn -e -B dependency:go-offline
-
-COPY src /build/src
-RUN mvn -e -B clean install package -DskipTests && mv -v /build/target/*.jar /build/target/app.jar
-
-#==============================
-# Final container
-#==============================
-FROM openjdk as runner
-
-# Set the working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy jar file
-COPY --from=builder /build/target/app.jar /app/
+# Copy the Maven project file
+COPY pom.xml .
 
-WORKDIR /app/workdir
+# Download all required dependencies into one layer
+RUN mvn dependency:go-offline -B
 
-# Run the jar file
-CMD ["java", "-jar", "/app/app.jar"]
+# Copy the source code of the project
+COPY src ./src
+
+# Building an application
+RUN mvn package -DskipTests
+
+# Use the AdoptOpenJDK image as the base image for the final stage
+FROM adoptopenjdk:8-jre-hotspot
+
+# Setup environment variables
+ENV BOT_NAME=""
+ENV BOT_TOKEN=""
+ENV GOOGLE_CREDENTIALS=""
+
+# Setup the working directory in the container
+WORKDIR /app
+
+# Copy the compiled application file from the previous stage
+COPY --from=build /app/target/ScheduleBot-1.0.jar ./app.jar
+
+EXPOSE 8080
+
+CMD ["java", "-jar", "app.jar"]

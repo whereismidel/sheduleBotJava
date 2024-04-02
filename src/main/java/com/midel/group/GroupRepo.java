@@ -153,41 +153,45 @@ public class GroupRepo {
 
                     String subjectName;
                     SubjectFullInfo subjectObj;
-                    if (!String.valueOf(subject.get(2)).trim().equals("") || !String.valueOf(subject.get(3)).trim().equals("") ||
-                            !String.valueOf(subject.get(4)).trim().equals("") || !String.valueOf(subject.get(5)).trim().equals("")) {
+                    if (!String.valueOf(subject.get(2)).trim().isEmpty() || !String.valueOf(subject.get(3)).trim().isEmpty() ||
+                            !String.valueOf(subject.get(4)).trim().isEmpty() || !String.valueOf(subject.get(5)).trim().isEmpty()) {
                         // Common Subject -> first group = second group
-                        subjectName = String.valueOf(subject.get(0)).trim().equals("") ? null : String.valueOf(subject.get(0)).trim();
+                        subjectName = String.valueOf(subject.get(0)).trim().isEmpty() ? null : String.valueOf(subject.get(0)).trim();
 
                         subjectObj = new SubjectFullInfo(
-                                String.valueOf(subject.get(1)).trim().equals("") ? null : String.valueOf(subject.get(1)).trim(),
+                                String.valueOf(subject.get(1)).trim().isEmpty() ? null : String.valueOf(subject.get(1)).trim(),
                                 true,
 
-                                String.valueOf(subject.get(2)).trim().equals("") ? null : String.valueOf(subject.get(2)).trim(),
-                                String.valueOf(subject.get(3)).trim().equals("") ? null : String.valueOf(subject.get(3)).trim(),
-                                String.valueOf(subject.get(4)).trim().equals("") ? null : String.valueOf(subject.get(4)).trim(),
-                                String.valueOf(subject.get(5)).trim().equals("") ? null : String.valueOf(subject.get(5)).trim(),
+                                String.valueOf(subject.get(2)).trim().isEmpty() ? null : String.valueOf(subject.get(2)).trim(),
+                                String.valueOf(subject.get(3)).trim().isEmpty() ? null : String.valueOf(subject.get(3)).trim(),
+                                String.valueOf(subject.get(4)).trim().isEmpty() ? null : String.valueOf(subject.get(4)).trim(),
+                                String.valueOf(subject.get(5)).trim().isEmpty()
+                                        || String.valueOf(subject.get(5)).trim().equals("not defined")? null : String.valueOf(subject.get(5)).trim(),
 
-                                String.valueOf(subject.get(2)).trim().equals("") ? null : String.valueOf(subject.get(2)).trim(),
-                                String.valueOf(subject.get(3)).trim().equals("") ? null : String.valueOf(subject.get(3)).trim(),
-                                String.valueOf(subject.get(4)).trim().equals("") ? null : String.valueOf(subject.get(4)).trim(),
-                                String.valueOf(subject.get(5)).trim().equals("") ? null : String.valueOf(subject.get(5)).trim()
+                                String.valueOf(subject.get(2)).trim().isEmpty() ? null : String.valueOf(subject.get(2)).trim(),
+                                String.valueOf(subject.get(3)).trim().isEmpty() ? null : String.valueOf(subject.get(3)).trim(),
+                                String.valueOf(subject.get(4)).trim().isEmpty() ? null : String.valueOf(subject.get(4)).trim(),
+                                String.valueOf(subject.get(5)).trim().isEmpty()
+                                        || String.valueOf(subject.get(5)).trim().equals("not defined")? null : String.valueOf(subject.get(5)).trim()
                         );
                     } else {
                         // Personal Subject for subgroups
-                        subjectName = String.valueOf(subject.get(0)).trim().equals("") ? null : String.valueOf(subject.get(0)).trim();
+                        subjectName = String.valueOf(subject.get(0)).trim().isEmpty() ? null : String.valueOf(subject.get(0)).trim();
                         subjectObj = new SubjectFullInfo(
-                                String.valueOf(subject.get(1)).trim().equals("") ? null : String.valueOf(subject.get(1)).trim(),
+                                String.valueOf(subject.get(1)).trim().isEmpty() ? null : String.valueOf(subject.get(1)).trim(),
                                 false,
 
-                                String.valueOf(subject.get(6)).trim().equals("") ? null : String.valueOf(subject.get(6)).trim(),
-                                String.valueOf(subject.get(7)).trim().equals("") ? null : String.valueOf(subject.get(7)).trim(),
-                                String.valueOf(subject.get(8)).trim().equals("") ? null : String.valueOf(subject.get(8)).trim(),
-                                String.valueOf(subject.get(9)).trim().equals("") ? null : String.valueOf(subject.get(9)).trim(),
+                                String.valueOf(subject.get(6)).trim().isEmpty() ? null : String.valueOf(subject.get(6)).trim(),
+                                String.valueOf(subject.get(7)).trim().isEmpty() ? null : String.valueOf(subject.get(7)).trim(),
+                                String.valueOf(subject.get(8)).trim().isEmpty() ? null : String.valueOf(subject.get(8)).trim(),
+                                String.valueOf(subject.get(9)).trim().isEmpty()
+                                        || String.valueOf(subject.get(9)).trim().equals("not defined")? null : String.valueOf(subject.get(9)).trim(),
 
-                                String.valueOf(subject.get(10)).trim().equals("") ? null : String.valueOf(subject.get(10)).trim(),
-                                String.valueOf(subject.get(11)).trim().equals("") ? null : String.valueOf(subject.get(11)).trim(),
-                                String.valueOf(subject.get(12)).trim().equals("") ? null : String.valueOf(subject.get(12)).trim(),
-                                String.valueOf(subject.get(13)).trim().equals("") ? null : String.valueOf(subject.get(13)).trim()
+                                String.valueOf(subject.get(10)).trim().isEmpty() ? null : String.valueOf(subject.get(10)).trim(),
+                                String.valueOf(subject.get(11)).trim().isEmpty() ? null : String.valueOf(subject.get(11)).trim(),
+                                String.valueOf(subject.get(12)).trim().isEmpty() ? null : String.valueOf(subject.get(12)).trim(),
+                                String.valueOf(subject.get(13)).trim().isEmpty()
+                                        || String.valueOf(subject.get(13)).trim().equals("not defined")? null : String.valueOf(subject.get(13)).trim()
                         );
                     }
 
@@ -201,10 +205,10 @@ public class GroupRepo {
                 }
 
                 // Removing irrelevant subject
-                if (subjectNameActual.size() == 0){
+                if (subjectNameActual.isEmpty()){
                     subjectList.clear();
                 } else {
-                    if (subjectList.size() > 0) {
+                    if (!subjectList.isEmpty()) {
                         for (String string : Stream.concat(
                                 subjectList.keySet().stream().filter(c -> !subjectNameActual.contains(c)),
                                 subjectNameActual.stream().filter(c -> !subjectList.containsKey(c))
@@ -261,13 +265,15 @@ public class GroupRepo {
             if (valuesFromGroupSchedule == null || valuesFromGroupSchedule.isEmpty()) {
                 logger.warn("No data found in \"РОЗКЛАД\". groupName = {}, sheetID = {}", group.getGroupName(), group.getSheetId());
             } else {
-                valuesFromGroupSchedule.subList(6, 12).clear(); // remove from values range A11:S16
+                valuesFromGroupSchedule.subList(6, 12).clear(); // remove from values range A11:W16
+
+
 
                 Week firstWeek = new Week();
                 Week secondWeek = new Week();
 
                 // fill schedule for first and second week
-                for (int dayCells = 0; dayCells < 5 * 4; dayCells += 4) {
+                for (int dayCells = 0; dayCells < (ChatConfig.isSaturdayLesson?6:5) * 4; dayCells += 4) {
                     /*
                         dayCells+0 - lesson number,
                         dayCells+1 - lesson for first subgroup,
@@ -280,12 +286,11 @@ public class GroupRepo {
 
                     for (int lesson = 0; lesson < 6; lesson++) {
                         // Normalizing the size of all rows to avoid IndexOutOfBoundsException
-                        for (int i = 0; i < 19 - valuesFromGroupSchedule.get(lesson).size(); i++)
+                        for (int i = 0; i < ((int)DBConfig.dayScheduleEdge - 64) - valuesFromGroupSchedule.get(lesson).size(); i++)
                             valuesFromGroupSchedule.get(lesson).add("");
-                        for (int i = 0; i < 19 - valuesFromGroupSchedule.get(lesson + 6).size(); i++) {
+                        for (int i = 0; i < ((int)DBConfig.dayScheduleEdge - 64) - valuesFromGroupSchedule.get(lesson + 6).size(); i++) {
                             valuesFromGroupSchedule.get(lesson + 6).add("");
                         }
-
                         // lessons of the first week start from line 0 to 5 in the parsing list
                         String lessonForFirstGroup = String.valueOf(valuesFromGroupSchedule.get(lesson).get(dayCells + 1)).trim();
                         String lessonForSecondGroup = String.valueOf(valuesFromGroupSchedule.get(lesson).get(dayCells + 2)).trim();
@@ -296,7 +301,9 @@ public class GroupRepo {
                         lessonForSecondGroup = String.valueOf(valuesFromGroupSchedule.get(lesson + 6).get(dayCells + 2)).trim();
                         dayForSecondWeek.addLesson(Subject.getLesson(lessonForFirstGroup, lessonForSecondGroup, group.getSchedule().getSubjectInfo()));
                     }
+
                     try {
+                        System.out.println(dayForFirstWeek);
                         firstWeek.setDay(dayForFirstWeek, dayCells / 4);
                     } catch (TooManyDaysException tooManyDaysException){
                         logger.error("{} group = {}", tooManyDaysException.getMessage(), group);
@@ -304,6 +311,7 @@ public class GroupRepo {
                         break;
                     }
                     try {
+                        System.out.println(dayForSecondWeek);
                         secondWeek.setDay(dayForSecondWeek, dayCells / 4);
                     } catch (TooManyDaysException tooManyDaysException){
                         logger.error("{} group = {}", tooManyDaysException.getMessage(), group);
@@ -318,7 +326,7 @@ public class GroupRepo {
                 
                 // If validation is called by the user and the list is empty,
                 // then the method for generating a list of subject based on the schedule table is called.
-                if ((group.getSchedule().getSubjectInfo() == null || group.getSchedule().getSubjectInfo().size() == 0)
+                if ((group.getSchedule().getSubjectInfo() == null || group.getSchedule().getSubjectInfo().isEmpty())
                         && (group.getSettings().isState() || group.getSettings().isValid()))
                 {
                     if (GroupTablesValidator.isEmptyScheduleSheet(group)) {

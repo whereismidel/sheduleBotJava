@@ -39,6 +39,12 @@ public class CreateLeaderInlineHandler extends InlineKeyboardHandler {
         int messageId = message.getMessageId();
         sendMessage.deleteMessage(userId, messageId);
 
+        // ToDo Виправити валідацію
+//        if (!ChatConfig.ADMINS.contains(userId)){
+//            sendMessage.sendHTMLMessage(userId,"Можливість створення нових користувачів тимчасово обмежена \uD83D\uDE1E\nПерепрошую за незручності.");
+//            return;
+//        }
+
         Student student = StudentController.getStudentById(userId);
         boolean successLeaderRegistration;
         if (student == null) {
