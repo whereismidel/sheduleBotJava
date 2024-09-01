@@ -79,7 +79,7 @@ public class FullScheduleNotifyMessage {
         Day day;
 
         try {
-             day = group.getSchedule().getWeeks().get((weekNumber+1) % 2).getDay(dateTime.getDayOfWeek());
+             day = group.getSchedule().getWeeks().get((weekNumber+ChatConfig.startWeek-1) % 2).getDay(dateTime.getDayOfWeek());
         } catch (TooManyDaysException e) {
             throw new MissingMessageException("Missing message for " + dateTime.getDayOfWeek());
         }
