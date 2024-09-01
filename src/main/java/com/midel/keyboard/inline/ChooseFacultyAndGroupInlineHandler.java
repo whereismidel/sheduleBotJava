@@ -107,6 +107,8 @@ public class ChooseFacultyAndGroupInlineHandler extends InlineKeyboardHandler{
                                 {new Pair<>("2 курс", "choose_faculty_and_group#group/" + faculty + "/2")},
                                 {new Pair<>("3 курс", "choose_faculty_and_group#group/" + faculty + "/3")},
                                 {new Pair<>("4 курс", "choose_faculty_and_group#group/" + faculty + "/4")},
+                                {new Pair<>("5 курс", "choose_faculty_and_group#group/" + faculty + "/5")},
+                                {new Pair<>("6 курс", "choose_faculty_and_group#group/" + faculty + "/6")},
                                 {new Pair<>("Немає в списку", "choose_faculty_and_group#not_listed")},
                                 {new Pair<>("Пернутись назад", "choose_faculty_and_group#back-faculty")}
                         },
