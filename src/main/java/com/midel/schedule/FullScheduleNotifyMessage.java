@@ -144,7 +144,7 @@ public class FullScheduleNotifyMessage {
         if (onlyEmptyLesson){
             notificationMessage.append(missingFullSchedule);
         } else {
-            notificationMessage.append(String.format(lessonsPart, (weekNumber+1) % 2 == 0?"I" : "II",listOfLesson));
+            notificationMessage.append(String.format(lessonsPart, (weekNumber+ChatConfig.startWeek-1) % 2 == 0?"I" : "II",listOfLesson));
         }
 
         return notificationMessage.toString();
