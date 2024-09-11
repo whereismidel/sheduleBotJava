@@ -14,7 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.ChatMemberUpdated;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberAdministrator;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -106,8 +106,9 @@ public class CreateChannelReplyMessage extends ReplyMessage {
     // return warning if permission have been changed
     private static ChatMemberAction handleMemberAction(ChatMemberUpdated chatMemberUpdated) {
 //        List<String> allowedChatTypes = Arrays.asList("channel", "supergroup", "group");
-        List<String> allowedChatTypes = Collections.singletonList("channel");
+        List<String> allowedChatTypes = Arrays.asList("channel", "supergroup");
         String chatType = chatMemberUpdated.getChat().getType();
+
         if (!allowedChatTypes.contains(chatType)) {
             return ChatMemberAction.IGNORE;
         }
