@@ -28,11 +28,11 @@ public class ChatConfig {
 
 
     // Рік навчання
-    public static final int year = 2024;
+    public static final int year = 2025;
     // Дата початку семестру
-    public static final LocalDateTime startSemester = LocalDateTime.of(year,9,2,0,0, 1, 1);
+    public static final LocalDateTime startSemester = LocalDateTime.of(year,1,28,0,0, 1, 1);
     // Дата кінця семестру
-    public static final LocalDateTime endSemester = LocalDateTime.of(year,11,3,23,59, 59, 1);
+    public static final LocalDateTime endSemester = LocalDateTime.of(year,6,6,23,59, 59, 1);
     public static final int lessonDurabilityInMinute = 95;
     // Номер тижня від початку року, з якого почався семестр
     public static final long startWeekNumber =  WEEKS.between(LocalDateTime.of(year,1,1,0,0), startSemester);
