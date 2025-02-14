@@ -52,7 +52,7 @@ public class FullScheduleNotifyMessage {
         this.startWeekNumber = startWeekNumber;
         this.isTomorrow = isTomorrow;
 
-        this.weekNumber = dateTime.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
+        this.weekNumber = dateTime.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR) + ChatConfig.globalCorrelation;
     }
 
     public String getMessage() throws MissingMessageException {

@@ -39,4 +39,6 @@ public class ChatConfig {
     // Чи потрібні пари по суботам
     public static final boolean isSaturdayLesson = false;
     public static int startWeek = 2;
+
+    public static int globalCorrelation = 1;
 }

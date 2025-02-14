@@ -58,7 +58,7 @@ public class ScheduleController {
             if (dateTime.getHour() == time.timeNotification.getHour() && dateTime.getMinute() == time.timeNotification.getMinute()) {
                 if (group.getSettings().isDailyNotification() && group.getSettings().isState()) {
 
-                    int weekNumber = dateTime.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
+                    int weekNumber = dateTime.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR) + ChatConfig.globalCorrelation;
 
                     Day day;
                     try {

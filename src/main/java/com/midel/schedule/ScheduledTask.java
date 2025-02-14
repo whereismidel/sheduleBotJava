@@ -109,7 +109,7 @@ public class ScheduledTask {
                     if (ChatConfig.debugArray.get(1).equals(group.getGroupName())) {
                         group.getSettings().setDailyNotification(true);
 
-                        int scheduleNumber = currentZonedDate.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR) % 2 == 0 ? 1 : 0;
+                        int scheduleNumber = (currentZonedDate.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR) + ChatConfig.globalCorrelation) % 2 == 0 ? 1 : 0;
 
                         currentZonedDate = currentZonedDate.minusDays((currentZonedDate.getDayOfWeek().getValue()) + (7 * scheduleNumber));
                         currentZonedDate = currentZonedDate.withHour(0);
