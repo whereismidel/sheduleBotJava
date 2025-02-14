@@ -72,7 +72,7 @@ public class FullScheduleNotifyMessage {
                     isTomorrow? tomorrowTitlePart : titlePart,
                     dayOfWeek[(dateTime.getDayOfWeek().getValue()+6) % 7],
                     dateTime.format(DateTimeFormatter.ofPattern("dd.MM")),
-                    weekNumber - startWeekNumber
+                    weekNumber - startWeekNumber + 1
             )
         );
 
