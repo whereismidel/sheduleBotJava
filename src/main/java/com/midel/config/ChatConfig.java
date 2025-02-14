@@ -37,6 +37,6 @@ public class ChatConfig {
     // Номер тижня від початку року, з якого почався семестр
     public static final long startWeekNumber =  WEEKS.between(LocalDateTime.of(year,1,1,0,0), startSemester);
     // Чи потрібні пари по суботам
-    public static final boolean isSaturdayLesson = true;
-    public static int startWeek = 1;
+    public static final boolean isSaturdayLesson = false;
+    public static int startWeek = 2;
 }
